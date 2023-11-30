@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net7.0;</TargetFrameworks>
+	<Title>Avids.Dapper.Lambda</Title>
+	<Authors>Abigael Vaneakh</Authors>
+	<PackageId>Avids.Dapper.Lambda</PackageId>
+	<Product>Avids.Dapper.Lambda</Product>
+	<Description>Lambda extension for dapper. Chain style makes developers more elegant and intuitive.</Description>
+	<Version>0.1.0</Version>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>disable</Nullable>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<RepositoryUrl>https://github.com/abigaelvs/Avids.Dapper.Lambda</RepositoryUrl>
+	<PackageProjectUrl>https://github.com/abigaelvs/Avids.Dapper.Lambda</PackageProjectUrl>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageReleaseNotes>Initial Project</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.24" />
+  </ItemGroup>
+  
+  <ItemGroup>
+	<None Include="..\LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<None Include="..\README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>
+
+
