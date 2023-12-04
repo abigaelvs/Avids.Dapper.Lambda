@@ -1,3 +1,5 @@
+using System;
+
 namespace Avids.Dapper.Lambda.Exception
 {
     public class DapperExtensionException : ApplicationException

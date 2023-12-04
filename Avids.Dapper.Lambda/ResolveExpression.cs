@@ -1,6 +1,9 @@
-using System.Linq.Expressions;
+using System;
 using System.Reflection;
 using System.Text;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Collections.Generic;
 
 using Avids.Dapper.Lambda.Exception;
 using Avids.Dapper.Lambda.Expressions;
@@ -10,6 +13,9 @@ using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda
 {
+    /// <summary>
+    /// Base Class for Expression Resolver
+    /// </summary>
     internal class ResolveExpression
     {
         public ProviderOption ProviderOption { get; set; }
@@ -18,6 +24,12 @@ namespace Avids.Dapper.Lambda
             ProviderOption = providerOption;
         }
 
+        /// <summary>
+        /// Resolve OrderBy
+        /// </summary>
+        /// <param name="orderbyExpressionDic"></param>
+        /// <param name="withTableName"></param>
+        /// <returns></returns>
         public string ResolveOrderBy(Dictionary<EOrderBy, LambdaExpression> orderbyExpressionDic, bool withTableName = false)
         {
             List<string> orderByList = orderbyExpressionDic.Select(a =>
@@ -34,6 +46,13 @@ namespace Avids.Dapper.Lambda
             return $"ORDER BY {orderBy}";
         }
 
+        /// <summary>
+        /// Resolve Where
+        /// </summary>
+        /// <param name="whereExpressions"></param>
+        /// <param name="prefix"></param>
+        /// <param name="withTableName"></param>
+        /// <returns></returns>
         public WhereExpression ResolveWhere(Queue<Where> whereExpressions, string prefix = null, 
             bool withTableName = false)
         {
@@ -42,6 +61,12 @@ namespace Avids.Dapper.Lambda
             return where;
         }
 
+        /// <summary>
+        /// Resolve Join
+        /// </summary>
+        /// <param name="joinExpressions"></param>
+        /// <param name="prefix"></param>
+        /// <returns></returns>
         public JoinExpression ResolveJoin(Queue<Join> joinExpressions, string prefix = null)
         {
             JoinExpression join = new JoinExpression(joinExpressions, prefix, ProviderOption, true);
@@ -55,6 +80,12 @@ namespace Avids.Dapper.Lambda
         //    return where;
         //}
 
+        /// <summary>
+        /// Helper for Select
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="withTableName"></param>
+        /// <returns></returns>
         public string Helper(MemberBinding a, bool withTableName)
         {
             string tableName = a.Member.DeclaringType.GetTableAttributeName();
@@ -63,6 +94,13 @@ namespace Avids.Dapper.Lambda
             return $"{table}{field}";
         }
 
+        /// <summary>
+        /// Resolve Select
+        /// </summary>
+        /// <param name="selectExpressions"></param>
+        /// <param name="isNeedSelect"></param>
+        /// <param name="withTableName"></param>
+        /// <returns></returns>
         public string ResolveSelect(Queue<Select> selectExpressions = null, 
             bool isNeedSelect = true, bool withTableName = false)
         {
@@ -122,13 +160,19 @@ namespace Avids.Dapper.Lambda
             return selectSql;
         }
 
+        /// <summary>
+        /// Resolve Select of Update
+        /// </summary>
+        /// <param name="propertyInfos"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
         public string ResolveSelectOfUpdate(PropertyInfo[] propertyInfos, LambdaExpression selector)
         {
-            var selectSql = "";
+            string selectSql = "";
 
             if (selector == null)
             {
-                var propertyBuilder = new StringBuilder();
+                StringBuilder propertyBuilder = new StringBuilder();
                 foreach (var propertyInfo in propertyInfos)
                 {
                     if (propertyBuilder.Length > 0)
@@ -139,15 +183,15 @@ namespace Avids.Dapper.Lambda
             }
             else
             {
-                var nodeType = selector.Body.NodeType;
+                ExpressionType nodeType = selector.Body.NodeType;
                 if (nodeType == ExpressionType.MemberAccess)
                 {
-                    var columnName = ((MemberExpression)selector.Body).Member.GetColumnAttributeName();
+                    string columnName = ((MemberExpression)selector.Body).Member.GetColumnAttributeName();
                     selectSql = "INSERTED." + ProviderOption.CombineFieldName(columnName);
                 }
                 else if (nodeType == ExpressionType.MemberInit)
                 {
-                    var memberInitExpression = (MemberInitExpression)selector.Body;
+                    MemberInitExpression memberInitExpression = (MemberInitExpression)selector.Body;
                     selectSql = string.Join(",", memberInitExpression.Bindings.Select(a => "INSERTED." + ProviderOption.CombineFieldName(a.Member.GetColumnAttributeName())));
                 }
             }
@@ -155,17 +199,25 @@ namespace Avids.Dapper.Lambda
             return "OUTPUT " + selectSql;
         }
 
+        /// <summary>
+        /// Resolve Sum
+        /// </summary>
+        /// <param name="propertyInfos"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="DapperExtensionException"></exception>
         public string ResolveSum(PropertyInfo[] propertyInfos, LambdaExpression selector)
         {
             if (selector == null)
                 throw new ArgumentException("selector");
-            var selectSql = "";
+            string selectSql = "";
 
-            var nodeType = selector.Body.NodeType;
+            ExpressionType nodeType = selector.Body.NodeType;
             switch (nodeType)
             {
                 case ExpressionType.MemberAccess:
-                    var columnName = ((MemberExpression)selector.Body).Member.GetColumnAttributeName();
+                    string columnName = ((MemberExpression)selector.Body).Member.GetColumnAttributeName();
                     selectSql = $" SELECT {ProviderOption.FunctionIsNull}(SUM({ProviderOption.CombineFieldName(columnName)}),0)  ";
                     break;
                 case ExpressionType.MemberInit:
@@ -175,6 +227,12 @@ namespace Avids.Dapper.Lambda
             return selectSql;
         }
 
+        /// <summary>
+        /// Resolve Update
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="updateExpression"></param>
+        /// <returns></returns>
         public UpdateExpression ResolveUpdate<T>(Expression<Func<T, T>> updateExpression)
         {
             return new UpdateExpression(updateExpression, ProviderOption);

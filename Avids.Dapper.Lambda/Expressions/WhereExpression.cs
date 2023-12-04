@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 using Avids.Dapper.Lambda.Extension;
@@ -8,6 +9,9 @@ using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.Expressions
 {
+    /// <summary>
+    /// Where Expression Builder
+    /// </summary>
     public class WhereExpression : SqlCmdExpression
     {
         /// <summary>
@@ -41,6 +45,11 @@ namespace Avids.Dapper.Lambda.Expressions
             }
         }
 
+        /// <summary>
+        /// Visit Member for Where Expression
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         protected override Expression VisitMember(MemberExpression node)
         {
             string tableName = node.Member.DeclaringType.GetTableAttributeName();
@@ -53,6 +62,11 @@ namespace Avids.Dapper.Lambda.Expressions
             return node;
         }
 
+        /// <summary>
+        /// Visit Binary for Where Expression
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         protected override Expression VisitBinary(BinaryExpression node)
         {
             Visit(node.Left);
@@ -64,6 +78,11 @@ namespace Avids.Dapper.Lambda.Expressions
             return node;
         }
 
+        /// <summary>
+        /// Visit Constant for Where Expression
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         protected override Expression VisitConstant(ConstantExpression node)
         {
             SetParam(node.Value);
@@ -71,6 +90,11 @@ namespace Avids.Dapper.Lambda.Expressions
             return node;
         }
 
+        /// <summary>
+        /// Visit Method Call for Where Expression
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
             if (node.Method.Name == "Contains" && typeof(IEnumerable).IsAssignableFrom(node.Method.DeclaringType) &&
@@ -86,6 +110,10 @@ namespace Avids.Dapper.Lambda.Expressions
             return node;
         }
 
+        /// <summary>
+        /// Set Param for Where Expression
+        /// </summary>
+        /// <param name="value"></param>
         private void SetParam(object value)
         {
             if (value != null)
@@ -102,6 +130,11 @@ namespace Avids.Dapper.Lambda.Expressions
             }
         }
 
+        /// <summary>
+        /// Like in Where Expression
+        /// </summary>
+        /// <param name="node"></param>
+        /// <exception cref="DapperExtensionException"></exception>
         private void Like(MethodCallExpression node)
         {
             Visit(node.Object);
@@ -131,6 +164,10 @@ namespace Avids.Dapper.Lambda.Expressions
             }
         }
 
+        /// <summary>
+        /// Equal function in Where Expression
+        /// </summary>
+        /// <param name="node"></param>
         private void Equal(MethodCallExpression node)
         {
             Visit(node.Object);
@@ -139,6 +176,10 @@ namespace Avids.Dapper.Lambda.Expressions
             Param.Add(TempFieldName, argumentExpression);
         }
 
+        /// <summary>
+        /// TOLOWER sql function
+        /// </summary>
+        /// <param name="node"></param>
         private void ToLower(MethodCallExpression node)
         {
             _sqlCmd.Append("LOWER(");
@@ -146,6 +187,10 @@ namespace Avids.Dapper.Lambda.Expressions
             _sqlCmd.Append(")");
         }
 
+        /// <summary>
+        /// UPPER sql function
+        /// </summary>
+        /// <param name="node"></param>
         private void ToUpper(MethodCallExpression node)
         {
             _sqlCmd.Append("UPPER(");
@@ -153,6 +198,10 @@ namespace Avids.Dapper.Lambda.Expressions
             _sqlCmd.Append(")");
         }
 
+        /// <summary>
+        /// IN sql function
+        /// </summary>
+        /// <param name="node"></param>
         private void In(MethodCallExpression node)
         {
             IList arrayValue = (IList)((ConstantExpression)node.Object).Value;

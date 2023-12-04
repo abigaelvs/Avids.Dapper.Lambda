@@ -7,7 +7,7 @@ namespace Avids.Dapper.Lambda.SqLite
         public SqLiteResolveExpression(ProviderOption providerOption) : base(providerOption) { }
 
         /// <summary>
-        /// 
+        /// No Lock for SqlLite (Not supported)
         /// </summary>
         /// <param name="nolock"></param>
         /// <returns></returns>

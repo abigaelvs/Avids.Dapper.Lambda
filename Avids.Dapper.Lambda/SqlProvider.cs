@@ -9,6 +9,8 @@ using Avids.Dapper.Lambda.Expressions;
 using Avids.Dapper.Lambda.Extension;
 using Avids.Dapper.Lambda.Helper;
 using Avids.Dapper.Lambda.Model;
+using System.Collections.Generic;
+using System;
 
 namespace Avids.Dapper.Lambda
 {

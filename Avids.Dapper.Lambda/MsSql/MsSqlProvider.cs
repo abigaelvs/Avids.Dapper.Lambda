@@ -1,7 +1,8 @@
-using Avids.Dapper.Lambda.Model;
-
 namespace Avids.Dapper.Lambda.MsSql
 {
+    /// <summary>
+    /// Sql Provider for Microsoft SQL Server
+    /// </summary>
     internal class MsSqlProvider : SqlProvider
     {
         private const char OpenQuote = '[';

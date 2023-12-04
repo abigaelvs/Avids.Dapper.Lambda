@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Avids.Dapper.Lambda.Model

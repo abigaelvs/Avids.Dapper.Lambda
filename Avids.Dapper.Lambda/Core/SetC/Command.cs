@@ -1,5 +1,8 @@
+using System;
 using System.Data;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 using Dapper;
 
@@ -8,7 +11,7 @@ using Avids.Dapper.Lambda.Core.Interfaces;
 namespace Avids.Dapper.Lambda.Core.SetC
 {
     /// <summary>
-    /// Represet Command from dapper
+    /// Represent Command from dapper (Insert, Update, Delete)
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class Command<T> : AbstractSet, ICommand<T>, IInsert<T>
@@ -21,15 +24,15 @@ namespace Avids.Dapper.Lambda.Core.SetC
         {
         }
 
+        /// <inheritdoc />
         public int Update(T entity)
         {
             SqlProvider.FormatUpdate(entity);
 
-            Console.WriteLine(SqlProvider.SqlString);
-
             return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
+        /// <inheritdoc />
         public async Task<int> UpdateAsync(T entity)
         {
             SqlProvider.FormatUpdate(entity);
@@ -37,6 +40,7 @@ namespace Avids.Dapper.Lambda.Core.SetC
             return await DbCon.ExecuteAsync(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
+        /// <inheritdoc />
         public int Update(Expression<Func<T, T>> updateExpression)
         {
             SqlProvider.FormatUpdate(updateExpression);
@@ -44,6 +48,7 @@ namespace Avids.Dapper.Lambda.Core.SetC
             return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
+        /// <inheritdoc />
         public async Task<int> UpdateAsync(Expression<Func<T, T>> updateExpression)
         {
             SqlProvider.FormatUpdate(updateExpression);
@@ -51,6 +56,7 @@ namespace Avids.Dapper.Lambda.Core.SetC
             return await DbCon.ExecuteAsync(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
+        /// <inheritdoc />
         public int Delete()
         {
             SqlProvider.FormatDelete();
@@ -58,6 +64,7 @@ namespace Avids.Dapper.Lambda.Core.SetC
             return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
+        /// <inheritdoc />
         public async Task<int> DeleteAsync()
         {
             SqlProvider.FormatDelete();
@@ -65,22 +72,23 @@ namespace Avids.Dapper.Lambda.Core.SetC
             return await DbCon.ExecuteAsync(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
+        /// <inheritdoc />
         public int Insert(T entity)
         {
             SqlProvider.FormatInsert(entity);
 
-            Console.WriteLine(SqlProvider.SqlString);
             return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
+        /// <inheritdoc />
         public int Insert(Dictionary<string, object> entity)
         {
             SqlProvider.FormatInsert(entity);
 
-            Console.WriteLine(SqlProvider.SqlString);
             return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
+        /// <inheritdoc />
         public async Task<int> InsertAsync(T entity)
         {
             SqlProvider.FormatInsert(entity);

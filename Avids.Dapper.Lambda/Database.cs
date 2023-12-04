@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 
 using Avids.Dapper.Lambda.Core.SetC;

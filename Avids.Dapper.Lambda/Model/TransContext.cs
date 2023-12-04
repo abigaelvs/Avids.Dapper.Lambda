@@ -20,11 +20,21 @@ namespace Avids.Dapper.Lambda.Model
             _sqlProvider = sqlProvider;
         }
 
+        /// <summary>
+        /// QuerySet for TransContext
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public QuerySet<T> QuerySet<T>()
         {
             return new QuerySet<T>(_sqlConnection, _sqlProvider, _dbTransaction);
         }
 
+        /// <summary>
+        /// CommandSet for TransContext
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public CommandSet<T> CommandSet<T>()
         {
             return new CommandSet<T>(_sqlConnection, _sqlProvider, _dbTransaction);

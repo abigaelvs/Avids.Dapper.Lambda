@@ -1,3 +1,4 @@
+using System;
 using System.Linq.Expressions;
 
 using Avids.Dapper.Lambda.Extension;
@@ -17,6 +18,11 @@ namespace Avids.Dapper.Lambda.Helper
             return new TrimExpression().Visit(expression);
         }
 
+        /// <summary>
+        /// Sub
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         private Expression Sub(Expression expression)
         {
             Type type = expression.Type;
@@ -33,7 +39,6 @@ namespace Avids.Dapper.Lambda.Helper
                     if (root != null)
                     {
                         object value = mExpression.MemberToValue(root);
-                        Console.WriteLine(value);
                         return Expression.Constant(value, type);
                     }
                     else
@@ -105,6 +110,11 @@ namespace Avids.Dapper.Lambda.Helper
             return expression;
         }
 
+        /// <summary>
+        /// Visit
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
         public override Expression Visit(Expression exp)
         {
             if (exp == null)

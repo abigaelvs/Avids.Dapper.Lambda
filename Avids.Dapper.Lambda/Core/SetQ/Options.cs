@@ -1,7 +1,8 @@
-using System.ComponentModel;
+using System;
 using System.Data;
 using System.Linq.Expressions;
-using System.Net;
+
+using Avids.Dapper.Lambda.Model;
 using Avids.Dapper.Lambda.Core.Interfaces;
 
 namespace Avids.Dapper.Lambda.Core.SetQ
@@ -30,21 +31,24 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         //    return new QuerySet<TResult>(DbCon, SqlProvider, typeof(T), DbTransaction);
         //}
 
+        /// <inheritdoc />
         public virtual Option<T> Select<E>(Expression<Func<T, E>> selector)
         {
             CreateSelect(selector);
             return this;
         }
 
+        /// <inheritdoc />
         public virtual Option<T> Select<S, E>(Expression<Func<S, E>> selector)
         {
             CreateSelect(selector);
             return this;
         }
 
+        /// <inheritdoc />
         private void CreateSelect(LambdaExpression predicate)
         {
-            Avids.Dapper.Lambda.Model.Select select = new();
+            Select select = new();
             select.SelectExpression = predicate;
             SqlProvider.SetContext.SelectExpressions.Enqueue(select);
         }
@@ -62,6 +66,7 @@ namespace Avids.Dapper.Lambda.Core.SetQ
             return this;
         }
 
+        /// <inheritdoc />
         public virtual Option<T> Offset(int num)
         {
             SqlProvider.SetContext.OffsetNum = num;
