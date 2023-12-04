@@ -32,7 +32,7 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         /// <inheritdoc />
         public QuerySet<T> Where(Expression<Func<T, bool>> predicate)
         {
-            Where where = new();
+            Where where = new Where();
             if (SqlProvider.SetContext.WhereExpressions.Count > 0) where.WhereType = EWhere.AND;
             where.WhereExpression = predicate;
             SqlProvider.SetContext.WhereExpressions.Enqueue(where);
@@ -42,7 +42,7 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         /// <inheritdoc />
         public QuerySet<T> Where<W>(Expression<Func<W, bool>> predicate)
         {
-            Where where = new();
+            Where where = new Where();
             where.WhereType = EWhere.AND;
             where.WhereExpression = predicate;
             SqlProvider.SetContext.WhereExpressions.Enqueue(where);
@@ -52,7 +52,7 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         /// <inheritdoc />
         public QuerySet<T> And<W>(Expression<Func<W, bool>> predicate)
         {
-            Where where = new();
+            Where where = new Where();
             where.WhereType = EWhere.AND;
             where.WhereExpression = predicate;
             SqlProvider.SetContext.WhereExpressions.Enqueue(where);
@@ -62,7 +62,7 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         /// <inheritdoc />
         public QuerySet<T> Or<W>(Expression<Func<W, bool>> predicate)
         {
-            Where where = new();
+            Where where = new Where();
             where.WhereType = EWhere.OR;
             where.WhereExpression = predicate;
             SqlProvider.SetContext.WhereExpressions.Enqueue(where);
@@ -102,7 +102,7 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         protected void CreateJoin<I, O>(Type tableType, string joinType, 
             Expression<Func<I, O, bool>> onExpression)
         {
-            Join join = new();
+            Join join = new Join();
             join.TableType = tableType;
             join.JoinType = joinType;
             join.OnExpression = onExpression;

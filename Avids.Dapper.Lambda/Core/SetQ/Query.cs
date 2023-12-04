@@ -56,13 +56,14 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         {
             SqlProvider.FormatToPageList<T>(pageIndex, pageSize);
 
-            using GridReader queryResult = DbCon.QueryMultiple(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
-            
-            int pageTotal = queryResult.ReadFirst<int>();
+            using (GridReader queryResult = DbCon.QueryMultiple(SqlProvider.SqlString, SqlProvider.Params, DbTransaction))
+            {
+                int pageTotal = queryResult.ReadFirst<int>();
 
-            IEnumerable<T> itemList = queryResult.Read<T>();
+                IEnumerable<T> itemList = queryResult.Read<T>();
 
-            return new PageList<T>(pageIndex, pageSize, pageTotal, itemList);
+                return new PageList<T>(pageIndex, pageSize, pageTotal, itemList);
+            }
         }
     }
 }

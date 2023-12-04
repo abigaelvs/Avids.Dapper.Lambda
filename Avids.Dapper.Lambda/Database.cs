@@ -107,13 +107,17 @@ namespace Avids.Dapper.Lambda
         /// <returns></returns>
         public static SqlProvider GetSqlProvider(IDbConnection sqlConnection)
         {
-            return sqlConnection.GetType().Name switch
+            switch (sqlConnection.GetType().Name)
             {
-                "NpgsqlConnection" => new PostgreSqlProvider(),
-                "SqlConnection" => new MsSqlProvider(),
-                "MySqlConnection" => new MySqlProvider(),
-                _ => throw new DapperExtensionException("Your database provider currently not supported"),
-            };
+                case "NpgsqlConnection":
+                    return new PostgreSqlProvider();
+                case "SqlConnection":
+                    return new MsSqlProvider();
+                case "MySqlConnection":
+                    return new MySqlProvider();
+                default:
+                    throw new DapperExtensionException("Your database provider currently not supported");
+            }
         }
     }
 }

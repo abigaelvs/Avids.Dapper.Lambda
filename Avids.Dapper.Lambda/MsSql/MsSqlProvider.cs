@@ -1,3 +1,5 @@
+using Avids.Dapper.Lambda.Model;
+
 namespace Avids.Dapper.Lambda.MsSql
 {
     /// <summary>
@@ -13,7 +15,7 @@ namespace Avids.Dapper.Lambda.MsSql
 
         public MsSqlProvider()
         {
-            ProviderOption = new(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
+            ProviderOption = new ProviderOption(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
             ResolveExpression = new MsSqlResolveExpression(ProviderOption);
         }
     }

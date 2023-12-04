@@ -1,3 +1,5 @@
+using Avids.Dapper.Lambda.Model;
+
 namespace Avids.Dapper.Lambda.PostgreSql
 {
     /// <summary>
@@ -32,7 +34,7 @@ namespace Avids.Dapper.Lambda.PostgreSql
 
         public PostgreSqlProvider() : base()
         {
-            ProviderOption = new(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
+            ProviderOption = new ProviderOption(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
             ResolveExpression = new PostgreSqlResolveExpression(ProviderOption);
         }
     }

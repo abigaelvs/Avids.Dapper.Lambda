@@ -27,8 +27,8 @@ namespace Avids.Dapper.Lambda.Core.SetC
         /// <inheritdoc />
         public ICommand<T> Where(Expression<Func<T, bool>> predicate)
         {
-            Where where = new();
-            where.WhereType = SqlProvider.SetContext.WhereExpressions.Count > 0 ? EWhere.AND : null;
+            Where where = new Where();
+            where.WhereType = SqlProvider.SetContext.WhereExpressions.Count > 0 ? (EWhere?)EWhere.AND : null;
             where.WhereExpression = predicate;
             SqlProvider.SetContext.WhereExpressions.Enqueue(where);
             return this;

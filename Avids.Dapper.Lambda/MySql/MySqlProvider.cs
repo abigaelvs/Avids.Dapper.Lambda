@@ -1,3 +1,5 @@
+using Avids.Dapper.Lambda.Model;
+
 namespace Avids.Dapper.Lambda.MySql
 {
     /// <summary>
@@ -32,7 +34,7 @@ namespace Avids.Dapper.Lambda.MySql
 
         public MySqlProvider()
         {
-            ProviderOption = new(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
+            ProviderOption = new ProviderOption(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
             ResolveExpression = new MySqlResolveExpression(ProviderOption);
         }
     }

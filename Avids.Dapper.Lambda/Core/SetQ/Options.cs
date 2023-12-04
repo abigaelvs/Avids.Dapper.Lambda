@@ -48,7 +48,7 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         /// <inheritdoc />
         private void CreateSelect(LambdaExpression predicate)
         {
-            Select select = new();
+            Select select = new Select();
             select.SelectExpression = predicate;
             SqlProvider.SetContext.SelectExpressions.Enqueue(select);
         }

@@ -122,7 +122,7 @@ namespace Avids.Dapper.Lambda
             }
             else
             {
-                List<string> selects = new();
+                List<string> selects = new List<string>();
                 
                 while (selectExpressions.Count > 0)
                 {
