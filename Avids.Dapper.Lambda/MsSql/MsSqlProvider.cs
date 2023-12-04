@@ -2,6 +2,9 @@ using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.MsSql
 {
+    /// <summary>
+    /// Sql Provider for Microsoft SQL Server
+    /// </summary>
     internal class MsSqlProvider : SqlProvider
     {
         private const char OpenQuote = '[';
@@ -12,7 +15,7 @@ namespace Avids.Dapper.Lambda.MsSql
 
         public MsSqlProvider()
         {
-            ProviderOption = new(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
+            ProviderOption = new ProviderOption(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
             ResolveExpression = new MsSqlResolveExpression(ProviderOption);
         }
     }

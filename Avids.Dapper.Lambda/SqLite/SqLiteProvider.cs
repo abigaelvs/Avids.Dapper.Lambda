@@ -1,4 +1,4 @@
-using Avids.Dapper.Lambda;
+using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.SqLite
 {
@@ -34,7 +34,7 @@ namespace Avids.Dapper.Lambda.SqLite
 
         public SqLiteProvider() : base()
         {
-            ProviderOption = new(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
+            ProviderOption = new ProviderOption(OpenQuote, CloseQuote, ParameterPrefix, FunctionIsNull, FunctionNoLock);
             ResolveExpression = new SqLiteResolveExpression(ProviderOption);
         }
     }

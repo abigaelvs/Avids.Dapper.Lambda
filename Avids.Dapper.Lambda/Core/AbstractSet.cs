@@ -2,6 +2,9 @@ using System.Data;
 
 namespace Avids.Dapper.Lambda.Core
 {
+    /// <summary>
+    /// Abstraction for QuerySet and CommandSet
+    /// </summary>
     public abstract class AbstractSet
     {
         public SqlProvider SqlProvider { get; protected set; }

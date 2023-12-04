@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Avids.Dapper.Lambda.Model
@@ -17,7 +19,7 @@ namespace Avids.Dapper.Lambda.Model
         /// <summary>
         /// Queue of Where
         /// </summary>
-        public Queue<Where> WhereExpressions { get; internal set; } = new();
+        public Queue<Where> WhereExpressions { get; internal set; } = new Queue<Where>();
 
         /// <summary>
         /// If Not Exists Expression
@@ -37,12 +39,12 @@ namespace Avids.Dapper.Lambda.Model
         /// <summary>
         /// Queue of Select Expression
         /// </summary>
-        public Queue<Select> SelectExpressions { get; internal set; } = new();
+        public Queue<Select> SelectExpressions { get; internal set; } = new Queue<Select>();
 
         /// <summary>
         /// Queue of Join Expression
         /// </summary>
-        public Queue<Join> JoinExpressions { get; internal set;} = new();
+        public Queue<Join> JoinExpressions { get; internal set;} = new Queue<Join>();
 
         /// <summary>
         /// Limit Num

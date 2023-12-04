@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 
 using Avids.Dapper.Lambda.Helper;
@@ -37,7 +40,7 @@ namespace Avids.Dapper.Lambda.Extension
                 newDt.Columns.Add(columnName, columnType);
             });
 
-            foreach (var item in list)
+            foreach (T item in list)
             {
                 DataRow newRow = newDt.NewRow();
 

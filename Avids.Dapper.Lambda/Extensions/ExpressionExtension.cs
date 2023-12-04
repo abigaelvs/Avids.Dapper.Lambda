@@ -1,6 +1,8 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq.Expressions;
+using System;
 using System.Reflection;
+using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 using Avids.Dapper.Lambda.Helper;
 
@@ -29,7 +31,7 @@ namespace Avids.Dapper.Lambda.Extension
         /// <summary>
         /// Get Expression TypeConversion Result
         /// </summary>
-        /// <param name="node">二元表达式</param>
+        /// <param name="node">Binary Expression</param>
         /// <returns></returns>
         public static string GetExpressionType(this BinaryExpression node)
         {
@@ -81,20 +83,33 @@ namespace Avids.Dapper.Lambda.Extension
             if (expression.Type != typeof(object))
                 expression = Expression.Convert(expression, typeof(object));
 
-            var lambdaExpression = Expression.Lambda<Func<object>>(expression);
+            Expression<Func<object>> lambdaExpression = Expression.Lambda<Func<object>>(expression);
             return lambdaExpression.Compile().Invoke();
         }
         #endregion
 
+
+        /// <summary>
+        /// Member to Value
+        /// </summary>
+        /// <param name="memberExpression"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public static object MemberToValue(this MemberExpression memberExpression)
         {
             MemberExpression topMember = GetRootMember(memberExpression);
             if (topMember == null)
-                throw new InvalidOperationException("需计算的条件表达式只支持由 MemberExpression 和 ConstantExpression 组成的表达式");
+                throw new InvalidOperationException("The conditional expression to be calculated only supports MemberExpression and ConstantExpression expression consisting of");
 
             return memberExpression.MemberToValue(topMember);
         }
 
+        /// <summary>
+        /// Convert Member expression to Value
+        /// </summary>
+        /// <param name="memberExpression"></param>
+        /// <param name="topMember"></param>
+        /// <returns></returns>
         public static object MemberToValue(this MemberExpression memberExpression, MemberExpression topMember)
         {
             if (topMember.Expression == null)
@@ -112,6 +127,12 @@ namespace Avids.Dapper.Lambda.Extension
             }
         }
 
+        /// <summary>
+        /// Get Instance Property
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="topMember"></param>
+        /// <returns></returns>
         private static Func<object, object[], object> GetInstanceProperty(Expression e, MemberExpression topMember)
         {
             ParameterExpression parameter = Expression.Parameter(typeof(object), "local");
@@ -124,6 +145,11 @@ namespace Avids.Dapper.Lambda.Extension
             return compileExpression.Compile();
         }
 
+        /// <summary>
+        /// Get Static Property of object
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
         private static Func<object, object[], object> GetStaticProperty(Expression e)
         {
             ParameterExpression parameter = Expression.Parameter(typeof(object), "local");
@@ -133,6 +159,11 @@ namespace Avids.Dapper.Lambda.Extension
             return compileExpression.Compile();
         }
 
+        /// <summary>
+        /// Get Column Attribute Name
+        /// </summary>
+        /// <param name="memberInfo"></param>
+        /// <returns></returns>
         public static string GetColumnAttributeName(this MemberInfo memberInfo)
         {
             return memberInfo.GetCustomAttribute<ColumnAttribute>()?.Name ?? memberInfo.Name;

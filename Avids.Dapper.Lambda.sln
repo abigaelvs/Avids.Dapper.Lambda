@@ -10,9 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avids.Dapper.Lambda", "Avids.Dapper.Lambda\Avids.Dapper.Lambda.csproj", "{F2114AA8-06B7-498D-A95D-93D8AE1AE678}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avids.Dapper.Lambda.Sample", "Avids.Dapper.Lambda.Sample\Avids.Dapper.Lambda.Sample.csproj", "{46A08336-EB29-4761-8955-C6B0C4B54E24}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avids.Dapper.Lambda", "Avids.Dapper.Lambda\Avids.Dapper.Lambda.csproj", "{BD36B8EE-308E-436D-843E-7B87B4597627}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,14 +20,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F2114AA8-06B7-498D-A95D-93D8AE1AE678}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2114AA8-06B7-498D-A95D-93D8AE1AE678}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F2114AA8-06B7-498D-A95D-93D8AE1AE678}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F2114AA8-06B7-498D-A95D-93D8AE1AE678}.Release|Any CPU.Build.0 = Release|Any CPU
 		{46A08336-EB29-4761-8955-C6B0C4B54E24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{46A08336-EB29-4761-8955-C6B0C4B54E24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46A08336-EB29-4761-8955-C6B0C4B54E24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46A08336-EB29-4761-8955-C6B0C4B54E24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD36B8EE-308E-436D-843E-7B87B4597627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD36B8EE-308E-436D-843E-7B87B4597627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD36B8EE-308E-436D-843E-7B87B4597627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD36B8EE-308E-436D-843E-7B87B4597627}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

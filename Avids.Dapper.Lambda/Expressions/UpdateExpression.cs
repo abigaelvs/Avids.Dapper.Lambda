@@ -1,6 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+using System.Linq;
 using System.Reflection;
+using System.Linq.Expressions;
+using System.ComponentModel.DataAnnotations;
 
 using Avids.Dapper.Lambda.Extension;
 using Avids.Dapper.Lambda.Helper;
@@ -8,6 +9,9 @@ using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.Expressions
 {
+    /// <summary>
+    /// Update Expression Builder
+    /// </summary>
     public class UpdateExpression : SqlCmdExpression
     {
         public override string SqlCmd => _sqlCmd.Length > 0 ? $" SET {_sqlCmd} " : string.Empty;
@@ -18,6 +22,11 @@ namespace Avids.Dapper.Lambda.Expressions
             Visit(expression);
         }
 
+        /// <summary>
+        /// Visit Member for Update Expression
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         protected override Expression VisitMember(MemberExpression node)
         {
             MemberExpression memberInitExpression = node;
@@ -43,7 +52,11 @@ namespace Avids.Dapper.Lambda.Expressions
             return node;
         }
 
-
+        /// <summary>
+        /// Visit Member Init for Update Expression
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         protected override Expression VisitMemberInit(MemberInitExpression node)
         {
             MemberInitExpression memberInitExpression = node;
@@ -73,6 +86,12 @@ namespace Avids.Dapper.Lambda.Expressions
             return node;
         }
 
+        /// <summary>
+        /// Set Param for sql cmd
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <param name="paramName"></param>
+        /// <param name="value"></param>
         private void SetParam(string fieldName, string paramName, object value)
         {
             string n = $"{_parameterPrefix}{_prefix}{paramName}";

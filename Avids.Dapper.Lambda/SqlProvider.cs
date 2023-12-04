@@ -9,6 +9,8 @@ using Avids.Dapper.Lambda.Expressions;
 using Avids.Dapper.Lambda.Extension;
 using Avids.Dapper.Lambda.Helper;
 using Avids.Dapper.Lambda.Model;
+using System.Collections.Generic;
+using System;
 
 namespace Avids.Dapper.Lambda
 {
@@ -188,7 +190,7 @@ namespace Avids.Dapper.Lambda
                 SqlString = $"INSERT INTO {FormatTableName(false)} ({paramsAndValuesSql[0]}) VALUES ({paramsAndValuesSql[1]})";
             else
             {
-                Where where = new();
+                Where where = new Where();
                 where.WhereExpression = SetContext.IfNotExistsExpression;
                 SetContext.WhereExpressions.Enqueue(where);
                 WhereExpression ifnotexistsWhere = ResolveExpression.ResolveWhere(SetContext.WhereExpressions, "INT_");
@@ -214,7 +216,7 @@ namespace Avids.Dapper.Lambda
                 SqlString = $"INSERT INTO {FormatTableName(false)} ({paramsAndValuesSql[0]}) VALUES ({paramsAndValuesSql[1]})";
             else
             {
-                Where where = new();
+                Where where = new Where();
                 where.WhereExpression = SetContext.IfNotExistsExpression;
                 SetContext.WhereExpressions.Enqueue(where);
                 WhereExpression ifnotexistsWhere = ResolveExpression.ResolveWhere(SetContext.WhereExpressions, "INT_");

@@ -1,8 +1,13 @@
+using System.Collections.Generic;
+
 using Avids.Dapper.Lambda.Helper;
 using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.Expressions
 {
+    /// <summary>
+    /// Join Expression Builder
+    /// </summary>
     public class JoinExpression : WhereExpression
     {
         /// <inheritdoc/>

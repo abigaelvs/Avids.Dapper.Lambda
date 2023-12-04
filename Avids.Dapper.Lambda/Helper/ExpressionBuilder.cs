@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Avids.Dapper.Lambda.Helper
@@ -51,15 +54,26 @@ namespace Avids.Dapper.Lambda.Helper
             _parameterMap = map ?? new Dictionary<ParameterExpression, ParameterExpression>();
         }
 
+        /// <summary>
+        /// Replace Parameters
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="newParameters"></param>
+        /// <returns></returns>
         public static Expression ReplaceParameters(Dictionary<ParameterExpression, ParameterExpression> map,
             Expression newParameters)
         {
             return new ParameterRebinder(map).Visit(newParameters);
         }
 
+        /// <summary>
+        /// Visit Parameter Expression
+        /// </summary>
+        /// <param name="newParameters"></param>
+        /// <returns></returns>
         protected override Expression VisitParameter(ParameterExpression newParameters)
         {
-            if (_parameterMap.TryGetValue(newParameters, out var replacement))
+            if (_parameterMap.TryGetValue(newParameters, out ParameterExpression replacement))
             {
                 newParameters = replacement;
             }

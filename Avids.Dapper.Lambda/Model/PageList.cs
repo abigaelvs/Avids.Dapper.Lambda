@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Avids.Dapper.Lambda.Model
 {
     /// <summary>

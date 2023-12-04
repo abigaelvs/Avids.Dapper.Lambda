@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Linq.Expressions;
 
@@ -8,7 +9,7 @@ using Avids.Dapper.Lambda.Model;
 namespace Avids.Dapper.Lambda.Core.SetC
 {
     /// <summary>
-    /// Represent Command from Dapper
+    /// Represent Command from Dapper (Insert, Update, Delete)
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class CommandSet<T> : Command<T>, ICommandSet<T>
@@ -23,18 +24,21 @@ namespace Avids.Dapper.Lambda.Core.SetC
             SqlProvider.SetContext.TableType = typeof(T);
         }
 
+        /// <inheritdoc />
         public ICommand<T> Where(Expression<Func<T, bool>> predicate)
         {
-            Where where = new();
-            where.WhereType = SqlProvider.SetContext.WhereExpressions.Count > 0 ? EWhere.AND : null;
+            Where where = new Where();
+            where.WhereType = SqlProvider.SetContext.WhereExpressions.Count > 0 ? (EWhere?)EWhere.AND : null;
             where.WhereExpression = predicate;
             SqlProvider.SetContext.WhereExpressions.Enqueue(where);
             return this;
         }
 
+        /// <inheritdoc />
         public IInsert<T> IfNotExists(Expression<Func<T, bool>> predicate)
         {
-            SqlProvider.SetContext.IfNotExistsExpression = SqlProvider.SetContext.IfNotExistsExpression == null ? predicate : ((Expression<Func<T, bool>>)SqlProvider.SetContext.IfNotExistsExpression).And(predicate);
+            SqlProvider.SetContext.IfNotExistsExpression = SqlProvider.SetContext.IfNotExistsExpression == null ? 
+                predicate : ((Expression<Func<T, bool>>)SqlProvider.SetContext.IfNotExistsExpression).And(predicate);
 
             return this;
         }

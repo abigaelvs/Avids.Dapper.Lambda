@@ -7,6 +7,9 @@ using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.Expressions
 {
+    /// <summary>
+    /// Base Expression all expression builder
+    /// </summary>
     public class SqlCmdExpression : ExpressionVisitor
     {
         public virtual string SqlCmd => _sqlCmd.Length > 0 ? _sqlCmd.ToString() : string.Empty;

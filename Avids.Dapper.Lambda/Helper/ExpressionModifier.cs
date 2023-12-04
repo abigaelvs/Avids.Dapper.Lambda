@@ -18,6 +18,13 @@ namespace Avids.Dapper.Lambda.Helper
             return Visit(node == _oldExpression ? _newExpression : node);
         }
 
+        /// <summary>
+        /// Replace
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="oldExpression"></param>
+        /// <param name="newExpression"></param>
+        /// <returns></returns>
         public static Expression Replace(Expression node, Expression oldExpression, Expression newExpression)
         {
             return new ExpressionModifier(newExpression, oldExpression).Replace(node);
