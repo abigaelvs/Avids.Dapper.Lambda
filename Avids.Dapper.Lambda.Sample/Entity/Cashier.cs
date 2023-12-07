@@ -2,13 +2,10 @@
 
 namespace Avids.Dapper.Lambda.Sample.Entity
 {
-    public class Customer
+    public class Cashier
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public string Address { get; set; }
         public long UserId { get; set; }
-
-        public Customer() { }
     }
 }
