@@ -52,7 +52,7 @@ namespace Avids.Dapper.Lambda
 
         public virtual SqlProvider FormatGet<T>()
         {
-            string selectSql = ResolveExpression.ResolveSelect(SetContext.SelectExpressions);
+            string selectSql = ResolveExpression.ResolveSelect(SetContext);
 
             string fromSql = FormatTableName();
 
@@ -84,7 +84,7 @@ namespace Avids.Dapper.Lambda
             JoinExpression joinParams = ResolveExpression.ResolveJoin(SetContext.JoinExpressions);
             WhereExpression whereParams = ResolveExpression.ResolveWhere(SetContext.WhereExpressions, withTableName: withTableName);
 
-            string selectSql = ResolveExpression.ResolveSelect(SetContext.SelectExpressions, withTableName: withTableName);
+            string selectSql = ResolveExpression.ResolveSelect(SetContext);
 
             string whereSql = whereParams.SqlCmd;
 
@@ -111,7 +111,7 @@ namespace Avids.Dapper.Lambda
             if (string.IsNullOrEmpty(orderbySql))
                 throw new DapperExtensionException("order by takes precedence over pagelist");
 
-            string selectSql = ResolveExpression.ResolveSelect(SetContext.SelectExpressions);
+            string selectSql = ResolveExpression.ResolveSelect(SetContext);
 
             string fromTableSql = FormatTableName();
 
@@ -292,7 +292,7 @@ namespace Avids.Dapper.Lambda
 
             UpdateExpression update = ResolveExpression.ResolveUpdate(updator);
 
-            string selectSql = ResolveExpression.ResolveSelect(SetContext.SelectExpressions, false);
+            string selectSql = ResolveExpression.ResolveSelect(SetContext, false);
 
             WhereExpression where = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
 
