@@ -80,18 +80,32 @@ namespace Avids.Dapper.Lambda
         //    return where;
         //}
 
+        public string GetSelectAsName(SetContext context, MemberBinding a)
+        {
+            string expr = a.GetType().GetProperty("Expression").GetValue(a).ToString();
+            string propName = expr.Split('.').ToList().ElementAt(1);
+            return context.TableType.GetProperty(propName).GetColumnAttributeName();
+        }
+
         /// <summary>
         /// Helper for Select
         /// </summary>
         /// <param name="a"></param>
         /// <param name="withTableName"></param>
         /// <returns></returns>
-        public string Helper(MemberBinding a, bool withTableName)
+        public string ResolveSelectHelper(SetContext context, MemberBinding a)
         {
+            string selectAs = GetSelectAsName(context, a);
+
             string tableName = a.Member.DeclaringType.GetTableAttributeName();
-            string table = withTableName ? $"{ProviderOption.CombineFieldName(tableName)}." : "";
-            string field = ProviderOption.CombineFieldName(a.Member.GetColumnAttributeName());
-            return $"{table}{field}";
+            string table = context.HasJoin ? $"{ProviderOption.CombineFieldName(tableName)}." : "";
+            string column = a.Member.GetColumnAttributeName();
+            string field = ProviderOption.CombineFieldName(column);
+            string fieldAs = context.HasJoin || column != selectAs ? 
+                $" AS {ProviderOption.CombineFieldName(selectAs)}" : "";
+
+            string result = $"{table}{field}{fieldAs}";
+            return result;
         }
 
         /// <summary>
@@ -101,60 +115,52 @@ namespace Avids.Dapper.Lambda
         /// <param name="isNeedSelect"></param>
         /// <param name="withTableName"></param>
         /// <returns></returns>
-        public string ResolveSelect(Queue<Select> selectExpressions = null, 
-            bool isNeedSelect = true, bool withTableName = false)
+        public string ResolveSelect(SetContext context, bool isNeedSelect = true)
         {
-            string selectFormat = isNeedSelect ? "SELECT {0}" : "{0}";
+            string statement = "";
+            if (isNeedSelect) statement += "SELECT ";
+            if (context.Distinct) statement += "DISTINCT";
+            string selectFormat = isNeedSelect ? $"{statement}" + " {0}" : "{0}";
             string selectSql = "";
 
-            if (selectExpressions.Count < 1)
+            if (context.SelectExpressions.Count < 1)
             {
                 StringBuilder propertyBuilder = new StringBuilder();
                 propertyBuilder.Append("*");
-                //foreach (var propertyInfo in propertyInfos)
-                //{
-                //    if (propertyBuilder.Length > 0)
-                //        propertyBuilder.Append(",");
-                //    propertyBuilder.AppendFormat($"{ProviderOption.CombineFieldName(propertyInfo.GetColumnAttributeName())} AS {ProviderOption.CombineFieldName(propertyInfo.Name)}");
-                //}
-                //selectSql = string.Format(selectFormat, propertyBuilder);
                 selectSql = string.Format(selectFormat, propertyBuilder);
+                return selectSql;
             }
-            else
-            {
-                List<string> selects = new List<string>();
+         
+            List<string> selects = new List<string>();
                 
-                while (selectExpressions.Count > 0)
+            while (context.SelectExpressions.Count > 0)
+            {
+                Select select = context.SelectExpressions.Dequeue();
+                LambdaExpression expr = select.SelectExpression;
+                ExpressionType nodeType = expr.Body.NodeType;
+                if (nodeType == ExpressionType.MemberAccess)
                 {
-                    Select select = selectExpressions.Dequeue();
-                    LambdaExpression expr = select.SelectExpression;
-                    ExpressionType nodeType = expr.Body.NodeType;
-                    if (nodeType == ExpressionType.MemberAccess)
-                    {
-                        MemberInfo memberAccess = ((MemberExpression)expr.Body).Member;
-                        string tableName = memberAccess.DeclaringType.GetTableAttributeName();
-                        string table = withTableName ? $"{ProviderOption.CombineFieldName(tableName)}." : "";
-                        string columnName = ProviderOption.CombineFieldName(memberAccess.GetColumnAttributeName());
-                        //selectSql = string.Format(selectFormat, ProviderOption.CombineFieldName(columnName));
-                        selects.Add($"{table}{columnName}");
-                    }
-                    else if (nodeType == ExpressionType.MemberInit)
-                    {
-                        MemberInitExpression memberInitExpression = (MemberInitExpression)expr.Body;
-                        //selectSql = string.Format(selectFormat, string.Join(",", memberInitExpression.Bindings.Select(a => ProviderOption.CombineFieldName(a.Member.GetColumnAttributeName()))));
-                        selects.Add(string.Join(",", memberInitExpression.Bindings.Select(a => Helper(a, withTableName))));
-                    }
-                    else if (nodeType == ExpressionType.Parameter)
-                    {
-                        ParameterExpression memberExpression = (ParameterExpression)expr.Body;
-
-                        string table = $"{ProviderOption.CombineFieldName(memberExpression.Type.GetTableAttributeName())}.";
-                        string field = $"{table}*";
-                        selects.Add(field);
-                        //selectSql = string.Format(selectFormat, field);
-                    }
-                    selectSql = string.Format(selectFormat, string.Join(", ", selects));
+                    MemberInfo memberAccess = ((MemberExpression)expr.Body).Member;
+                    string tableName = memberAccess.DeclaringType.GetTableAttributeName();
+                    string table = context.HasJoin ? $"{ProviderOption.CombineFieldName(tableName)}." : "";
+                    string columnName = ProviderOption.CombineFieldName(memberAccess.GetColumnAttributeName());
+                    selects.Add($"{table}{columnName}");
                 }
+                else if (nodeType == ExpressionType.MemberInit)
+                {
+                    MemberInitExpression memberInitExpression = (MemberInitExpression)expr.Body;
+                    selects.Add(string.Join(", ", memberInitExpression.Bindings.Select(a =>
+                        ResolveSelectHelper(context, a))));
+                }
+                else if (nodeType == ExpressionType.Parameter)
+                {
+                    ParameterExpression memberExpression = (ParameterExpression)expr.Body;
+
+                    string table = $"{ProviderOption.CombineFieldName(memberExpression.Type.GetTableAttributeName())}.";
+                    string field = $"{table}*";
+                    selects.Add(field);
+                }
+                selectSql = string.Format(selectFormat, string.Join(", ", selects));
             }
 
             return selectSql;
