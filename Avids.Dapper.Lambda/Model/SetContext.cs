@@ -32,11 +32,6 @@ namespace Avids.Dapper.Lambda.Model
         public Dictionary<EOrderBy, LambdaExpression> OrderbyExpressionList { get; internal set; }
 
         /// <summary>
-        /// Select Expression
-        /// </summary>
-        public LambdaExpression SelectExpression { get; internal set; }
-
-        /// <summary>
         /// Queue of Select Expression
         /// </summary>
         public Queue<Select> SelectExpressions { get; internal set; } = new Queue<Select>();
@@ -44,7 +39,7 @@ namespace Avids.Dapper.Lambda.Model
         /// <summary>
         /// Queue of Join Expression
         /// </summary>
-        public Queue<Join> JoinExpressions { get; internal set;} = new Queue<Join>();
+        public Queue<Join> JoinExpressions { get; internal set; } = new Queue<Join>();
 
         /// <summary>
         /// Limit Num
@@ -60,5 +55,15 @@ namespace Avids.Dapper.Lambda.Model
         /// No Lock
         /// </summary>
         public bool NoLock { get; internal set; }
+
+        /// <summary>
+        /// Distinct
+        /// </summary>
+        public bool Distinct { get; internal set; }
+
+        /// <summary>
+        /// Get if context has join expression or not
+        /// </summary>
+        public bool HasJoin { get; set; }
     }
 }

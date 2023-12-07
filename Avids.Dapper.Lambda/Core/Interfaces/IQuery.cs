@@ -25,14 +25,14 @@ namespace Avids.Dapper.Lambda.Core.Interfaces
         /// </summary>
         /// <returns></returns>
 
-        IEnumerable<T> ToList();
+        List<T> ToList();
 
         /// <summary>
         /// Execute sql statement and convert result to list async
         /// </summary>
         /// <returns></returns>
 
-        Task<IEnumerable<T>> ToListAsync();
+        Task<List<T>> ToListAsync();
 
         /// <summary>
         /// Execute sql statement and convert result to pagination

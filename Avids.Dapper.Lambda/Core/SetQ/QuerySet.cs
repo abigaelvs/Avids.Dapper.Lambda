@@ -102,6 +102,8 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         protected void CreateJoin<I, O>(Type tableType, string joinType, 
             Expression<Func<I, O, bool>> onExpression)
         {
+            if (SqlProvider.SetContext.JoinExpressions.Count < 1) SqlProvider.SetContext.HasJoin = true;
+
             Join join = new Join();
             join.TableType = tableType;
             join.JoinType = joinType;

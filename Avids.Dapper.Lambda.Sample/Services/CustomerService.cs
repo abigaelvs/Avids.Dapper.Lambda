@@ -18,8 +18,8 @@ namespace Avids.Dapper.Lambda.Sample.Services
 
             await conn.OpenAsync();
 
-            Customer result = await conn.QuerySet<Customer>().Where(c => c.CustomerId.Equals(id)).GetAsync();
-            await conn.CommandSet<Customer>().Where(c => c.CustomerId.Equals(id)).DeleteAsync();
+            Customer result = await conn.QuerySet<Customer>().Where(c => c.Id.Equals(id)).GetAsync();
+            await conn.CommandSet<Customer>().Where(c => c.Id.Equals(id)).DeleteAsync();
 
             await conn.CloseAsync();
 
@@ -32,7 +32,7 @@ namespace Avids.Dapper.Lambda.Sample.Services
 
             await conn.OpenAsync();
 
-            IEnumerable<Customer> result = await conn.QuerySet<Customer>().ToListAsync();
+            List<Customer> result = await conn.QuerySet<Customer>().ToListAsync();
             await conn.CloseAsync();
 
             return result;
@@ -44,7 +44,7 @@ namespace Avids.Dapper.Lambda.Sample.Services
 
             await conn.OpenAsync();
 
-            Customer result = await conn.QuerySet<Customer>().Where(c => c.CustomerId.Equals(id)).GetAsync();
+            Customer result = await conn.QuerySet<Customer>().Where(c => c.Id.Equals(id)).GetAsync();
             await conn.CloseAsync();
 
             return result;
@@ -69,7 +69,7 @@ namespace Avids.Dapper.Lambda.Sample.Services
 
             await conn.OpenAsync();
 
-            await conn.CommandSet<Customer>().Where(c => c.CustomerId.Equals(customer.CustomerId))
+            await conn.CommandSet<Customer>().Where(c => c.Id.Equals(customer.Id))
                 .UpdateAsync(customer);
 
             await conn.CloseAsync();
