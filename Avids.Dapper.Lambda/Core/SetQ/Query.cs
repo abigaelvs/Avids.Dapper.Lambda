@@ -50,8 +50,6 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         {
             SqlProvider.FormatToList<T>();
 
-            Console.WriteLine(SqlProvider.SqlString);
-
             IEnumerable<T> result = await DbCon.QueryAsync<T>(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
             return result.ToList();
         }
