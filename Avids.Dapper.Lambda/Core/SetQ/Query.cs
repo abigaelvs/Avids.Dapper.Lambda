@@ -1,4 +1,6 @@
+using System;
 using System.Data;
+using System.Linq;
 
 using static Dapper.SqlMapper;
 
@@ -36,19 +38,22 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         }
 
         /// <inheritdoc />
-        public IEnumerable<T> ToList()
+        public List<T> ToList()
         {
             SqlProvider.FormatToList<T>();
             
-            return DbCon.Query<T>(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
+            return DbCon.Query<T>(SqlProvider.SqlString, SqlProvider.Params, DbTransaction).ToList();
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<T>> ToListAsync()
+        public async Task<List<T>> ToListAsync()
         {
             SqlProvider.FormatToList<T>();
 
-            return await DbCon.QueryAsync<T>(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
+            Console.WriteLine(SqlProvider.SqlString);
+
+            IEnumerable<T> result = await DbCon.QueryAsync<T>(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
+            return result.ToList();
         }
 
         /// <inheritdoc />
