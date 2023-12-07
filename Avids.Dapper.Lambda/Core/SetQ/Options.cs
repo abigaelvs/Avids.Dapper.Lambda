@@ -24,24 +24,15 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         }
 
         /// <inheritdoc />
-        //public virtual Query<TResult> Select<TResult>(Expression<Func<T, TResult>> selector)
-        //{
-        //    SqlProvider.SetContext.SelectExpression = selector;
-
-        //    return new QuerySet<TResult>(DbCon, SqlProvider, typeof(T), DbTransaction);
-        //}
-
-        /// <inheritdoc />
         public virtual Option<T> Select<E>(Expression<Func<T, E>> selector)
         {
             CreateSelect(selector);
             return this;
         }
 
-        /// <inheritdoc />
-        public virtual Option<T> Select<S, E>(Expression<Func<S, E>> selector)
+        public virtual Option<T> Distinct()
         {
-            CreateSelect(selector);
+            SqlProvider.SetContext.Distinct = true;
             return this;
         }
 
@@ -52,12 +43,6 @@ namespace Avids.Dapper.Lambda.Core.SetQ
             select.SelectExpression = predicate;
             SqlProvider.SetContext.SelectExpressions.Enqueue(select);
         }
-        //public virtual QuerySet<TResult> Select<TResult>(Expression<Func<T, TResult>> selector)
-        //{
-        //    SqlProvider.SetContext.SelectExpression = selector;
-
-        //    return new QuerySet<TResult>(DbCon, SqlProvider, typeof(T), DbTransaction);
-        //}
 
         /// <inheritdoc />
         public virtual Option<T> Limit(int num)
