@@ -7,16 +7,16 @@
 	<PackageId>Avids.Dapper.Lambda</PackageId>
 	<Product>Avids.Dapper.Lambda</Product>
 	<Description>Lambda extension for dapper. Chain style makes developers more elegant and intuitive.</Description>
-	<AssemblyVersion>0.1.1</AssemblyVersion>
-	<FileVersion>0.1.1</FileVersion>
-	<Version>0.1.1</Version>
+	<AssemblyVersion>0.1.2</AssemblyVersion>
+	<FileVersion>0.1.2</FileVersion>
+	<Version>0.1.2</Version>
 	<Nullable>disable</Nullable>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/abigaelvs/Avids.Dapper.Lambda</RepositoryUrl>
 	<PackageProjectUrl>https://github.com/abigaelvs/Avids.Dapper.Lambda</PackageProjectUrl>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<PackageReleaseNotes>Added .NET Standard and .NET Framework Support</PackageReleaseNotes>
+	<PackageReleaseNotes>Added SELECT AS and SELECT DISTINCT support</PackageReleaseNotes>
 	<Copyright></Copyright>
   </PropertyGroup>
 
