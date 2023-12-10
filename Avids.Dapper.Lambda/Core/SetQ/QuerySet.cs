@@ -77,35 +77,48 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         }
 
         /// <inheritdoc />
-        public QuerySet<T> InnerJoin<I, O>(Type tableType, Expression<Func<I, O, bool>> on)
+        public QuerySet<T> InnerJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on)
         {
-            CreateJoin(tableType, "INNER JOIN", on);
+            CreateJoin(EJoin.InnerJoin, on);
             return this;
         }
 
         /// <inheritdoc />
-        public QuerySet<T> LeftJoin<I, O>(Type tableType, Expression<Func<I, O, bool>> on)
+        public QuerySet<T> LeftJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on)
         {
-            CreateJoin(tableType, "LEFT JOIN", on);
+            CreateJoin(EJoin.LeftJoin, on);
             return this;
         }
 
         /// <inheritdoc />
-        public QuerySet<T> Join<I, O>(Expression<Func<I, O, bool>> on)
-            where I : class
-            where O : class
+        public QuerySet<T> RightJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on)
         {
+            CreateJoin(EJoin.RightJoin, on);
             return this;
         }
 
-
-        protected void CreateJoin<I, O>(Type tableType, string joinType, 
-            Expression<Func<I, O, bool>> onExpression)
+        /// <inheritdoc />
+        public QuerySet<T> FullJoin<ITJoinTable>(Expression<Func<ITJoinTable, T, bool>> on)
         {
+            CreateJoin(EJoin.FullJoin, on);
+            return this;
+        }
+
+        /// <summary>
+        /// Add Join Expression to Queue Join Expressions
+        /// </summary>
+        /// <typeparam name="I"></typeparam>
+        /// <typeparam name="O"></typeparam>
+        /// <param name="joinType"></param>
+        /// <param name="onExpression"></param>
+        protected void CreateJoin<TJoinTable, O>(EJoin joinType, 
+            Expression<Func<TJoinTable, O, bool>> onExpression)
+        {
+            // Set Has Join to true, to mark that sql provider has join
             if (SqlProvider.SetContext.JoinExpressions.Count < 1) SqlProvider.SetContext.HasJoin = true;
 
             Join join = new Join();
-            join.TableType = tableType;
+            join.TableType = typeof(TJoinTable);
             join.JoinType = joinType;
             join.OnExpression = onExpression;
             SqlProvider.SetContext.JoinExpressions.Enqueue(join);
