@@ -19,14 +19,10 @@ namespace Avids.Dapper.Lambda.Sample.Services
             using NpgsqlConnection conn = new(cs);
 
             Option<SearchInvoiceList> invoices = conn.QuerySet<SearchInvoiceList>()
-                .InnerJoin(typeof(Cashier),
-                (SearchInvoiceList inv, Cashier cashier) => inv.CashierId == cashier.Id)
-                .InnerJoin(typeof(Customer),
-                (SearchInvoiceList inv, Customer cust) => inv.CustomerId == cust.Id)
-                .InnerJoin(typeof(InvoiceStatus),
-                (Invoice inv, InvoiceStatus stat) => inv.StatusId == stat.Id)
-                .InnerJoin(typeof(PaymentStatus),
-                (Invoice inv, PaymentStatus stat) => inv.PaymentStatusId == stat.Id)
+                .InnerJoin((InvoiceStatus stat, SearchInvoiceList inv) => stat.Id == inv.Id)
+                .LeftJoin((Cashier cashier, SearchInvoiceList inv) => cashier.Id == inv.CashierId)
+                .RightJoin((Customer cust, SearchInvoiceList inv) => cust.Id == inv.CustomerId)
+                .FullJoin((PaymentStatus stat, SearchInvoiceList inv) => stat.Id == inv.PaymentStatusId)
                 .Select(inv => inv)
                 .Select(inv => new Cashier
                 {
