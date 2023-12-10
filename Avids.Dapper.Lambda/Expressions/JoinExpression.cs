@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+using Avids.Dapper.Lambda.Extension;
 using Avids.Dapper.Lambda.Helper;
 using Avids.Dapper.Lambda.Model;
 
@@ -18,9 +19,10 @@ namespace Avids.Dapper.Lambda.Expressions
             while (joinExpressions.Count > 0)
             {
                 Join curr = joinExpressions.Dequeue();
+                string joinType = curr.JoinType.GetJoinType();
                 string tableName = providerOption.CombineFieldName(curr.TableType.GetTableAttributeName());
 
-                _sqlCmd.Append($" {curr.JoinType} {tableName} ON ");
+                _sqlCmd.Append($" {joinType} {tableName} ON ");
                 Visit(TrimExpression.Trim(curr.OnExpression));
             }
         }

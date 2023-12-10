@@ -5,10 +5,10 @@ namespace Avids.Dapper.Lambda.Model
     /// </summary>
     public enum EJoin
     {
-        INNERJOIN,
-        LEFTJOIN,
-        RIGHTJOIN,
-        FULLJOIN,
-        SELFJOIN
+        InnerJoin,
+        LeftJoin,
+        RightJoin,
+        FullJoin,
+        SelfJoin
     }
 }

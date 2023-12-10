@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Avids.Dapper.Lambda.Helper;
+using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.Extension
 {
@@ -25,6 +26,27 @@ namespace Avids.Dapper.Lambda.Extension
             {ExpressionType.GreaterThan," > "},
             {ExpressionType.GreaterThanOrEqual," >= "}
         };
+        #endregion
+
+        #region Join Type Dictionary
+
+        private static readonly Dictionary<EJoin, string> JoinTypeDic = new Dictionary<EJoin, string>
+        {
+            { EJoin.InnerJoin, "INNER JOIN" },
+            { EJoin.LeftJoin, "LEFT JOIN" },
+            { EJoin.RightJoin, "RIGHT JOIN" },
+            { EJoin.FullJoin,"FULL JOIN" },
+            { EJoin.SelfJoin, "SELF JOIN" }
+        };
+
+        #endregion
+
+        #region Get Join TypeConversion Result
+
+        public static string GetJoinType(this EJoin join)
+        {
+            return JoinTypeDic[join];
+        }
         #endregion
 
         #region Get Expression TypeConversion Result
