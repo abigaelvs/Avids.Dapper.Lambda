@@ -32,6 +32,11 @@ namespace Avids.Dapper.Lambda.Model
         public Dictionary<EOrderBy, LambdaExpression> OrderbyExpressionList { get; internal set; }
 
         /// <summary>
+        /// Group By Expression List
+        /// </summary>
+        public Queue<LambdaExpression> GroupByExpressionList { get; internal set; }
+
+        /// <summary>
         /// Queue of Select Expression
         /// </summary>
         public Queue<Select> SelectExpressions { get; internal set; } = new Queue<Select>();

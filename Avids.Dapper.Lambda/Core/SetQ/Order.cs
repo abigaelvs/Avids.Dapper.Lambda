@@ -40,5 +40,11 @@ namespace Avids.Dapper.Lambda.Core.SetQ
 
             return this;
         }
+
+        public virtual Order<T> GroupBy<TProperty>(Expression<Func<T, TProperty>> field)
+        {
+            if (field != null) SqlProvider.SetContext.GroupByExpressionList.Enqueue(field); 
+            return this;
+        }
     }
 }
