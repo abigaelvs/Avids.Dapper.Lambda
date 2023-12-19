@@ -34,7 +34,7 @@ namespace Avids.Dapper.Lambda.Model
         /// <summary>
         /// Group By Expression List
         /// </summary>
-        public Queue<LambdaExpression> GroupByExpressionList { get; internal set; }
+        public Queue<LambdaExpression> GroupByExpressionList { get; internal set; } = new Queue<LambdaExpression>();
 
         /// <summary>
         /// Queue of Select Expression

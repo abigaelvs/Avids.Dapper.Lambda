@@ -67,9 +67,11 @@ namespace Avids.Dapper.Lambda
 
             Params = whereParams.Param;
 
+            string groupBySql = ResolveExpression.ResolveGroupBy(SetContext);
+
             string orderBySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList);
 
-            SqlString = $"{selectSql} {fromSql} {joinSql} {noLockSql} {whereSql} {orderBySql} LIMIT 1";
+            SqlString = $"{selectSql} {fromSql} {joinSql} {noLockSql} {whereSql} {groupBySql} {orderBySql} LIMIT 1";
 
             return this;
         }
@@ -92,6 +94,8 @@ namespace Avids.Dapper.Lambda
 
             Params = whereParams.Param;
 
+            string groupBySql = ResolveExpression.ResolveGroupBy(SetContext);
+
             string orderbySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList, withTableName);
 
             int? limitNum = SetContext.LimitNum;
@@ -100,7 +104,7 @@ namespace Avids.Dapper.Lambda
             string limitSql = limitNum.HasValue ? $"LIMIT {limitNum}" : "";
             string offsetSql = offsetNum.HasValue ? $"OFFSET {offsetNum}" : "";
 
-            SqlString = $"{selectSql} {fromTableSql} {joinSql} {nolockSql} {whereSql} {orderbySql} {limitSql} {offsetSql}";
+            SqlString = $"{selectSql} {fromTableSql} {joinSql} {nolockSql} {whereSql} {groupBySql} {orderbySql} {limitSql} {offsetSql}";
 
             return this;
         }
@@ -110,6 +114,8 @@ namespace Avids.Dapper.Lambda
             string orderbySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList);
             if (string.IsNullOrEmpty(orderbySql))
                 throw new DapperExtensionException("order by takes precedence over pagelist");
+
+            string groupBySql = ResolveExpression.ResolveGroupBy(SetContext);
 
             string selectSql = ResolveExpression.ResolveSelect(SetContext);
 
@@ -124,7 +130,7 @@ namespace Avids.Dapper.Lambda
             Params = whereParams.Param;
 
             SqlString = $"SELECT COUNT(1) {fromTableSql} {nolockSql} {whereSql};";
-            SqlString += $"{selectSql} {fromTableSql} {nolockSql} {whereSql} {orderbySql} LIMIT {pageSize} OFFSET  {(pageIndex - 1) * pageSize}";
+            SqlString += $"{selectSql} {fromTableSql} {nolockSql} {whereSql} {groupBySql} {orderbySql} LIMIT {pageSize} OFFSET  {(pageIndex - 1) * pageSize}";
 
             return this;
         }

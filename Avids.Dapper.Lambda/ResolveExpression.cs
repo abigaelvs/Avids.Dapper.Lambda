@@ -47,6 +47,29 @@ namespace Avids.Dapper.Lambda
         }
 
         /// <summary>
+        /// Resolve Group By
+        /// </summary>
+        /// <param name="orderbyExpressionDic"></param>
+        /// <param name="withTableName"></param>
+        /// <returns></returns>
+        public string ResolveGroupBy(SetContext context)
+        {
+            Console.WriteLine("=== group by");
+            List<string> groupByList = context.GroupByExpressionList.Select(a =>
+            {
+                MemberInfo member = ((MemberExpression)a.Body).Member;
+                string tableName = context.HasJoin ? $"{ProviderOption.CombineFieldName(member.DeclaringType.GetTableAttributeName())}." : "";
+                string columnName = ProviderOption.CombineFieldName(member.GetColumnAttributeName());
+                return $"{tableName}{columnName}";
+            }).ToList();
+
+            if (!groupByList.Any()) return "";
+
+            string orderBy = string.Join(", ", groupByList);
+            return $"GROUP BY {orderBy}";
+        }
+
+        /// <summary>
         /// Resolve Where
         /// </summary>
         /// <param name="whereExpressions"></param>
