@@ -69,6 +69,14 @@ namespace Avids.Dapper.Lambda.Expressions
         /// <returns></returns>
         protected override Expression VisitBinary(BinaryExpression node)
         {
+            // Not Like
+            if (node.Left.NodeType == ExpressionType.Call)
+            {
+                MethodCallExpression call = node.Left as MethodCallExpression;
+                NotLike(call);
+                return node;
+            }
+            
             Visit(node.Left);
 
             _sqlCmd.Append(node.GetExpressionType());
@@ -131,6 +139,17 @@ namespace Avids.Dapper.Lambda.Expressions
         }
 
         /// <summary>
+        /// Not Like in Where Expression
+        /// </summary>
+        /// <param name="node"></param>
+        private void NotLike(MethodCallExpression node)
+        {
+            Visit(node.Object);
+            _sqlCmd.AppendFormat(" NOT LIKE {0}", ParamName);
+            LikeHelper(node);
+        }
+
+        /// <summary>
         /// Like in Where Expression
         /// </summary>
         /// <param name="node"></param>
@@ -139,6 +158,11 @@ namespace Avids.Dapper.Lambda.Expressions
         {
             Visit(node.Object);
             _sqlCmd.AppendFormat(" LIKE {0}", ParamName);
+            LikeHelper(node);
+        }
+
+        private void LikeHelper(MethodCallExpression node)
+        {
             switch (node.Method.Name)
             {
                 case "StartsWith":
