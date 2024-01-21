@@ -1,6 +1,8 @@
 using System;
 using System.Linq.Expressions;
 
+using Avids.Dapper.Lambda.Core.SetC;
+
 namespace Avids.Dapper.Lambda.Core.Interfaces
 {
     public interface ICommandSet<T>
@@ -10,7 +12,7 @@ namespace Avids.Dapper.Lambda.Core.Interfaces
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        ICommand<T> Where(Expression<Func<T, bool>> predicate);
+        Command<T> Where(Expression<Func<T, bool>> predicate);
 
         /// <summary>
         /// Create If not exists statement for Insert, Update, and Delete
