@@ -43,7 +43,7 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         public QuerySet<T> Where<W>(Expression<Func<W, bool>> predicate)
         {
             Where where = new Where();
-            where.WhereType = EWhere.AND;
+            if (SqlProvider.SetContext.WhereExpressions.Count > 0) where.WhereType = EWhere.AND;
             where.WhereExpression = predicate;
             SqlProvider.SetContext.WhereExpressions.Enqueue(where);
             return this;
