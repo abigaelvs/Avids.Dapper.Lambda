@@ -76,7 +76,7 @@ namespace Avids.Dapper.Lambda.Expressions
                 NotLike(call);
                 return node;
             }
-            
+
             Visit(node.Left);
 
             _sqlCmd.Append(node.GetExpressionType());
@@ -110,7 +110,7 @@ namespace Avids.Dapper.Lambda.Expressions
                 In(node);
             else if (node.Method.Name == "ToLower") ToLower(node);
             else if (node.Method.Name == "ToUpper") ToUpper(node);
-            else if (node.Method.Name == "Equals")
+            else if (node.Method.Name == "Equals") 
                 Equal(node);
             else
                 Like(node);
@@ -229,14 +229,23 @@ namespace Avids.Dapper.Lambda.Expressions
         private void In(MethodCallExpression node)
         {
             IList arrayValue = (IList)((ConstantExpression)node.Object).Value;
-            if (arrayValue.Count == 0)
+            if (arrayValue.Count == 0)  
             {
                 _sqlCmd.Append(" 1 = 2");
                 return;
             }
+
             Visit(node.Arguments[0]);
-            _sqlCmd.AppendFormat(" IN {0}", ParamName);
-            Param.Add(TempFieldName, arrayValue);
+
+            List<string> paramNames = new List<string>();
+            for (int i = 0; i < arrayValue.Count; i++)
+            {
+                paramNames.Add(ParamName);
+                Param.Add(TempFieldName, arrayValue[i]);
+                if (i < arrayValue.Count - 1) ParameterCount++;
+            }
+            string paramName = $"({string.Join(", ", paramNames)})";
+            _sqlCmd.AppendFormat(" IN {0}", paramName);
         }
     }
 }
