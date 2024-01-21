@@ -273,6 +273,12 @@ namespace Avids.Dapper.Lambda
             return this;
         }
 
+        public virtual SqlProvider FormatSum<T, TResult>(Expression<Func<T, TResult>> sumExpression)
+        {
+            LambdaExpression expr = sumExpression as LambdaExpression;
+            return FormatSum<T>(expr);
+        }
+
         public virtual SqlProvider FormatSum<T>(LambdaExpression lambdaExpression)
         {
             string selectSql = ResolveExpression.ResolveSum(typeof(T).GetProperties(), lambdaExpression);
@@ -297,6 +303,31 @@ namespace Avids.Dapper.Lambda
             string keyField = ProviderOption.CombineFieldName(typeof(T).GetKeyProperty().GetColumnAttributeName());
 
             UpdateExpression update = ResolveExpression.ResolveUpdate(updator);
+
+            string selectSql = ResolveExpression.ResolveSelect(SetContext, false);
+
+            WhereExpression where = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
+
+            string whereSql = where.SqlCmd;
+
+            Params = where.Param;
+            Params.AddDynamicParams(update.Param);
+
+            int? topNum = SetContext.LimitNum;
+
+            string limitSql = topNum.HasValue ? " LIMIT " + topNum.Value : "";
+            string tableName = FormatTableName(false);
+
+            SqlString = $"UPDATE {tableName} {update.SqlCmd} WHERE {keyField} IN (SELECT {keyField} FROM {tableName} {whereSql} {limitSql} FOR UPDATE SKIP LOCKED) RETURNING {selectSql}";
+
+            return this;
+        }
+
+        public virtual SqlProvider FormatUpdateSelect<T>(T entity)
+        {
+            string keyField = ProviderOption.CombineFieldName(typeof(T).GetKeyProperty().GetColumnAttributeName());
+
+            UpdateExpression update = ResolveExpression.ResolveUpdate<T>(a => entity);
 
             string selectSql = ResolveExpression.ResolveSelect(SetContext, false);
 

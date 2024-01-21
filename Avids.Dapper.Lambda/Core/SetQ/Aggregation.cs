@@ -35,7 +35,7 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         /// <inheritdoc />
         public TResult Sum<TResult>(Expression<Func<T, TResult>> sumExpression)
         {
-            SqlProvider.FormatSum<TResult>(sumExpression);
+            SqlProvider.FormatSum(sumExpression);
 
             return DbCon.QuerySingle<TResult>(SqlProvider.SqlString, SqlProvider.Params);
         }
