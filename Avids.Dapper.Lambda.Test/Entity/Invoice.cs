@@ -7,7 +7,7 @@
         public long StatusId { get; set; }
         public long PaymentStatusId { get; set; }
         public long CashierId { get; set; }
-        public long UpdatedByUserId { get; set; }
+        public long? UpdatedByUserId { get; set; }
         public long CustomerId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
