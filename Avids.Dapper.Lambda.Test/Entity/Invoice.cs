@@ -1,7 +1,10 @@
-﻿namespace Avids.Dapper.Lambda.Test.Entity
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Avids.Dapper.Lambda.Test.Entity
 {
     public class Invoice
     {
+        [Key]
         public long Id { get; set; }
         public string No { get; set; }
         public long StatusId { get; set; }
