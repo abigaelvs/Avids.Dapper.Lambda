@@ -16,7 +16,8 @@ namespace Avids.Dapper.Lambda.Test
                 + @"INNER JOIN ""InvoiceStatus"" ON ""InvoiceStatus"".""Id"" = ""Invoice"".""Id"" "
                 + @"LEFT JOIN ""Cashier"" ON ""Cashier"".""Id"" = ""Invoice"".""CashierId"" "
                 + @"RIGHT JOIN ""Customer"" ON ""Customer"".""Id"" = ""Invoice"".""CustomerId"" "
-                + @"FULL JOIN ""PaymentStatus"" ON ""PaymentStatus"".""Id"" = ""Invoice"".""PaymentStatusId""";
+                + @"FULL JOIN ""PaymentStatus"" ON ""PaymentStatus"".""Id"" = ""Invoice"".""PaymentStatusId""  "
+                + @"WHERE ""InvoiceStatus"".""Id"" = @Id1";
             string actual = new NpgsqlConnection().QuerySet<SearchInvoiceList>()
                 .InnerJoin((InvoiceStatus stat, SearchInvoiceList inv) => stat.Id == inv.Id)
                 .LeftJoin((Cashier cashier, SearchInvoiceList inv) => cashier.Id == inv.CashierId)
