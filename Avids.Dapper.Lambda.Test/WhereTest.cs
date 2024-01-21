@@ -14,7 +14,7 @@ namespace Avids.Dapper.Lambda.Test
                 + @"AND ""StatusId"" < @StatusId3 OR ""StatusId"" <= @StatusId4 AND ""StatusId"" >= @StatusId5 "
                 + @"AND ""Id"" != @Id6 OR ""No"" LIKE @No7 AND ""No"" LIKE @No8 AND ""No"" LIKE @No9 "
                 + @"OR ""No"" NOT LIKE @No10 AND ""No"" NOT LIKE @No11 AND ""No"" NOT LIKE @No12 "
-                + @"OR ""Id"" IN @Id13 AND ""No"" IN @No14 AND ""No"" IS NULL";
+                + @"OR ""Id"" IN (@Id13, @Id14, @Id15) AND ""No"" IN (@No16, @No17) AND ""No"" IS NULL";
             SqlProvider provider = new NpgsqlConnection().QuerySet<Invoice>()
                 .Where(inv => inv.Id == 1 && inv.StatusId > 1 && inv.StatusId < 1 
                 || inv.StatusId <= 1 && inv.StatusId >= 1 && inv.Id != 1 
