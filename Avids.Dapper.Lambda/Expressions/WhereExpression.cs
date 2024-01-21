@@ -70,7 +70,7 @@ namespace Avids.Dapper.Lambda.Expressions
         protected override Expression VisitBinary(BinaryExpression node)
         {
             // Not Like
-            if (node.Left.NodeType == ExpressionType.Call)
+            if (node.Left.NodeType == ExpressionType.Call && node.Right.NodeType == ExpressionType.Constant)
             {
                 MethodCallExpression call = node.Left as MethodCallExpression;
                 NotLike(call);
