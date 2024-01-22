@@ -1,5 +1,7 @@
-﻿using Avids.Dapper.Lambda.Test.Entity;
-using Npgsql;
+﻿using Npgsql;
+
+using Avids.Dapper.Lambda.Core.SetC;
+using Avids.Dapper.Lambda.Test.Entity;
 
 namespace Avids.Dapper.Lambda.Test
 {
@@ -47,8 +49,8 @@ namespace Avids.Dapper.Lambda.Test
             inv.UpdatedByUserId = null;
             inv.UpdatedDate = null;
 
-            string actual = new NpgsqlConnection().CommandSet<Invoice>()
-                .IfNotExists(inv => inv.Id == 1)
+            string actual = (new NpgsqlConnection().CommandSet<Invoice>()
+                .IfNotExists(inv => inv.Id == 1) as Command<Invoice>)
                 .SqlProvider.FormatInsert(inv).SqlString.Trim();
             Assert.Equal(expected, actual);
         }
