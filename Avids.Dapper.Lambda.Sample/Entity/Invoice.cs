@@ -1,7 +1,12 @@
-﻿namespace Avids.Dapper.Lambda.Sample.Entity
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Avids.Dapper.Lambda.Sample.Entity
 {
     public class Invoice
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         public string No { get; set; }
         public long StatusId { get; set; }
