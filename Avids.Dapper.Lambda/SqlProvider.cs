@@ -190,36 +190,18 @@ namespace Avids.Dapper.Lambda
 
         public virtual SqlProvider FormatInsert<T>(T entity)
         {
-            string[] paramsAndValuesSql = FormatInsertParamsAndValues(entity);
-
-            if (SetContext.IfNotExistsExpression == null)
-                SqlString = $"INSERT INTO {FormatTableName(false)} ({paramsAndValuesSql[0]}) VALUES ({paramsAndValuesSql[1]})";
-            else
-            {
-                Where where = new Where();
-                where.WhereExpression = SetContext.IfNotExistsExpression;
-                SetContext.WhereExpressions.Enqueue(where);
-                WhereExpression ifnotexistsWhere = ResolveExpression.ResolveWhere(SetContext.WhereExpressions, "INT_");
-
-                SqlString = string.Format(@"INSERT INTO {0}({1})  
-                SELECT {2}
-                WHERE NOT EXISTS(
-                    SELECT 1
-                    FROM {0}  
-                {3}
-                    ); ", FormatTableName(false), paramsAndValuesSql[0], paramsAndValuesSql[1], ifnotexistsWhere.SqlCmd);
-
-                Params.AddDynamicParams(ifnotexistsWhere.Param);
-            }
-
-            return this;
+            return FormatInsert<T>(a => entity);
         }
-        public virtual SqlProvider FormatInsert(Dictionary<string, object> entity)
+
+        public virtual SqlProvider FormatInsert<T>(Expression<Func<T, T>> insertExpression)
         {
-            string[] paramsAndValuesSql = FormatInsertParamsAndValues(entity);
+            InsertExpression insert = ResolveExpression.ResolveInsert<T>(insertExpression);
+            Params = insert.Param;
 
             if (SetContext.IfNotExistsExpression == null)
-                SqlString = $"INSERT INTO {FormatTableName(false)} ({paramsAndValuesSql[0]}) VALUES ({paramsAndValuesSql[1]})";
+            {
+                SqlString = $"INSERT INTO {FormatTableName(false)} {insert.SqlCmd}";
+            }
             else
             {
                 Where where = new Where();
@@ -227,13 +209,12 @@ namespace Avids.Dapper.Lambda
                 SetContext.WhereExpressions.Enqueue(where);
                 WhereExpression ifnotexistsWhere = ResolveExpression.ResolveWhere(SetContext.WhereExpressions, "INT_");
 
-                SqlString = string.Format(@"INSERT INTO {0}({1})  
-                SELECT {2}
-                WHERE NOT EXISTS(
-                    SELECT 1
-                    FROM {0}  
-                {3}
-                    ); ", FormatTableName(false), paramsAndValuesSql[0], paramsAndValuesSql[1], ifnotexistsWhere.SqlCmd);
+                string fields = insert.FieldsStr;
+                string values = insert.ValuesStr;
+                string sqlTemplate = @"INSERT INTO {0} ({1}) SELECT {2} "
+                    + @"WHERE NOT EXISTS(SELECT 1 FROM {0} {3})";
+                SqlString = string.Format(sqlTemplate, FormatTableName(false),
+                    fields, values, ifnotexistsWhere.SqlCmd);
 
                 Params.AddDynamicParams(ifnotexistsWhere.Param);
             }
@@ -362,64 +343,6 @@ namespace Avids.Dapper.Lambda
                 SqlString = "FROM " + SqlString;
 
             return SqlString;
-        }
-
-        protected string[] FormatInsertParamsAndValues<T>(T entity)
-        {
-            StringBuilder paramSqlBuilder = new StringBuilder(64);
-            StringBuilder valueSqlBuilder = new StringBuilder(64);
-
-            PropertyInfo[] properties = entity.GetProperties();
-
-            bool isAppend = false;
-            foreach (PropertyInfo propertiy in properties)
-            {
-                if (isAppend)
-                {
-                    paramSqlBuilder.Append(",");
-                    valueSqlBuilder.Append(",");
-                }
-
-                string columnName = propertiy.GetColumnAttributeName();
-                string paramterName = ProviderOption.ParameterPrefix + columnName;
-                paramSqlBuilder.Append(ProviderOption.CombineFieldName(columnName));
-                valueSqlBuilder.Append(paramterName);
-
-                Params.Add(paramterName, propertiy.GetValue(entity));
-
-                isAppend = true;
-            }
-
-            return new[] { paramSqlBuilder.ToString(), valueSqlBuilder.ToString() };
-        }
-
-        protected string[] FormatInsertParamsAndValues(Dictionary<string, object> entity)
-        {
-            StringBuilder paramSqlBuilder = new StringBuilder(64);
-            StringBuilder valueSqlBuilder = new StringBuilder(64);
-
-            PropertyInfo[] properties = entity.GetProperties();
-
-            bool isAppend = false;
-            foreach (PropertyInfo propertiy in properties)
-            {
-                if (isAppend)
-                {
-                    paramSqlBuilder.Append(",");
-                    valueSqlBuilder.Append(",");
-                }
-
-                string columnName = propertiy.GetColumnAttributeName();
-                string paramterName = ProviderOption.ParameterPrefix + columnName;
-                paramSqlBuilder.Append(ProviderOption.CombineFieldName(columnName));
-                valueSqlBuilder.Append(paramterName);
-
-                Params.Add(paramterName, propertiy.GetValue(entity));
-
-                isAppend = true;
-            }
-
-            return new[] { paramSqlBuilder.ToString(), valueSqlBuilder.ToString() };
         }
 
         public void FormatProperty<T>()

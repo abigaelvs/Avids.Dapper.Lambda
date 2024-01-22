@@ -267,6 +267,11 @@ namespace Avids.Dapper.Lambda
             return new UpdateExpression(updateExpression, ProviderOption);
         }
 
+        public InsertExpression ResolveInsert<T>(Expression<Func<T, T>> insertExpression)
+        {
+            return new InsertExpression(insertExpression, ProviderOption);
+        }
+
         /// <summary>
         /// Resolve NO LOCK Expression
         /// </summary>
