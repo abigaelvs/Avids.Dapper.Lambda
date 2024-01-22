@@ -35,7 +35,7 @@ namespace Avids.Dapper.Lambda.Core.SetC
         }
 
         /// <inheritdoc />
-        public IInsert<T> IfNotExists(Expression<Func<T, bool>> predicate)
+        public Command<T> IfNotExists(Expression<Func<T, bool>> predicate)
         {
             SqlProvider.SetContext.IfNotExistsExpression = SqlProvider.SetContext.IfNotExistsExpression == null ? 
                 predicate : ((Expression<Func<T, bool>>)SqlProvider.SetContext.IfNotExistsExpression).And(predicate);
