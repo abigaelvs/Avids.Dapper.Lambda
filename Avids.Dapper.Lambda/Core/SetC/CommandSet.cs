@@ -25,7 +25,7 @@ namespace Avids.Dapper.Lambda.Core.SetC
         }
 
         /// <inheritdoc />
-        public Command<T> Where(Expression<Func<T, bool>> predicate)
+        public ICommand<T> Where(Expression<Func<T, bool>> predicate)
         {
             Where where = new Where();
             where.WhereType = SqlProvider.SetContext.WhereExpressions.Count > 0 ? (EWhere?)EWhere.AND : null;
@@ -35,7 +35,7 @@ namespace Avids.Dapper.Lambda.Core.SetC
         }
 
         /// <inheritdoc />
-        public Command<T> IfNotExists(Expression<Func<T, bool>> predicate)
+        public IInsert<T> IfNotExists(Expression<Func<T, bool>> predicate)
         {
             SqlProvider.SetContext.IfNotExistsExpression = SqlProvider.SetContext.IfNotExistsExpression == null ? 
                 predicate : ((Expression<Func<T, bool>>)SqlProvider.SetContext.IfNotExistsExpression).And(predicate);
