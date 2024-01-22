@@ -19,7 +19,7 @@ namespace Avids.Dapper.Lambda.Core.Interfaces
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        IInsert<T> IfNotExists(Expression<Func<T, bool>> predicate);
+        Command<T> IfNotExists(Expression<Func<T, bool>> predicate);
 
         //void BatchInsert(IEnumerable<T> entities, int timeout = 120);
     }
