@@ -1,6 +1,5 @@
 using System;
 using System.Data;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -80,10 +79,9 @@ namespace Avids.Dapper.Lambda.Core.SetC
             return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
-        /// <inheritdoc />
-        public int Insert(Dictionary<string, object> entity)
+        public int Insert(Expression<Func<T, T>> insertExpression)
         {
-            SqlProvider.FormatInsert(entity);
+            SqlProvider.FormatInsert(insertExpression);
 
             return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
@@ -92,6 +90,13 @@ namespace Avids.Dapper.Lambda.Core.SetC
         public async Task<int> InsertAsync(T entity)
         {
             SqlProvider.FormatInsert(entity);
+
+            return await DbCon.ExecuteAsync(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
+        }
+
+        public async Task<int> InsertAsync(Expression<Func<T, T>> insertExpression)
+        {
+            SqlProvider.FormatInsert(insertExpression);
 
             return await DbCon.ExecuteAsync(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
