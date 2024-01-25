@@ -1,6 +1,8 @@
 using System;
 using System.Linq.Expressions;
 
+using Avids.Dapper.Lambda.Core.SetC;
+
 namespace Avids.Dapper.Lambda.Core.Interfaces
 {
     public interface ICommandSet<T>
