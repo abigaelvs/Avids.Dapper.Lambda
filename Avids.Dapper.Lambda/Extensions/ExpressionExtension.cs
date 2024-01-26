@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Reflection;
 using System.Linq.Expressions;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Avids.Dapper.Lambda.Helper;
 using Avids.Dapper.Lambda.Model;
+
 
 namespace Avids.Dapper.Lambda.Extension
 {
@@ -48,6 +50,12 @@ namespace Avids.Dapper.Lambda.Extension
             return JoinTypeDic[join];
         }
         #endregion
+
+        public static bool IsMethodCallList(MethodCallExpression node)
+        {
+            return node.Method.Name == "Contains" && typeof(IEnumerable).IsAssignableFrom(node.Method.DeclaringType)
+                    && node.Method.DeclaringType != typeof(string);
+        }
 
         #region Get Expression TypeConversion Result
         /// <summary>
