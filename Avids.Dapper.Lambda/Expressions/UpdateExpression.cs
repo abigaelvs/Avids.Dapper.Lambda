@@ -2,6 +2,7 @@ using System.Linq;
 using System.Reflection;
 using System.Linq.Expressions;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 using Avids.Dapper.Lambda.Extension;
 using Avids.Dapper.Lambda.Helper;
@@ -64,6 +65,10 @@ namespace Avids.Dapper.Lambda.Expressions
             foreach (MemberBinding item in memberInitExpression.Bindings)
             {
                 MemberAssignment memberAssignment = (MemberAssignment)item;
+
+                if (memberAssignment.Member.CustomAttributes.Any(b => b.AttributeType == typeof(KeyAttribute)) ||
+                    memberAssignment.Member.CustomAttributes.Any(b => b.AttributeType == typeof(DatabaseGeneratedAttribute)))
+                    continue;
 
                 if (_sqlCmd.Length > 0)
                     _sqlCmd.Append(",");
