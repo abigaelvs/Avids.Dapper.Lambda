@@ -242,10 +242,17 @@ namespace Avids.Dapper.Lambda
         {
             UpdateExpression update = ResolveExpression.ResolveUpdate<T>(a => entity);
 
-            WhereExpression where = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
+            SqlCmdExpression where = null;
+            if (SetContext.WhereExpressions.Count > 0)
+            {
+                where = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
+            }
+            else
+            {
+                where = ResolveExpression.ResolveWhere(entity);
+            }
 
             string whereSql = where.SqlCmd;
-
             Params = where.Param;
             Params.AddDynamicParams(update.Param);
 
