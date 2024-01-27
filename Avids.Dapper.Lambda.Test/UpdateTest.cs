@@ -14,7 +14,7 @@ namespace Avids.Dapper.Lambda.Test
                 + @"""StatusId""=@UPDATE_StatusId , ""PaymentStatusId""=@UPDATE_PaymentStatusId , "
                 + @"""CashierId""=@UPDATE_CashierId , ""UpdatedByUserId""=@UPDATE_UpdatedByUserId , "
                 + @"""CustomerId""=@UPDATE_CustomerId , ""CreatedDate""=@UPDATE_CreatedDate , "
-                + @"""UpdatedDate""=@UPDATE_UpdatedDate";
+                + @"""UpdatedDate""=@UPDATE_UpdatedDate    WHERE ""Id"" = @Id";
 
             Invoice inv = new();
             inv.No = "IV123";
@@ -26,6 +26,22 @@ namespace Avids.Dapper.Lambda.Test
             inv.UpdatedDate = null;
 
             string actual = new NpgsqlConnection().CommandSet<Invoice>().SqlProvider
+                .FormatUpdate(inv).SqlString.Trim();
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestUpdateWithMultipleKeyAttribute()
+        {
+            string expected = @"UPDATE ""CashierInvoice""  SET  ""BillingNo""=@UPDATE_BillingNo"
+                + @"    WHERE ""InvoiceId"" = @InvoiceId AND ""BillingId"" = @BillingId";
+
+            InvoiceBilling inv = new();
+            inv.InvoiceId = 1;
+            inv.BillingId = 1;
+            inv.BillingNo = "BILL123";
+
+            string actual = new NpgsqlConnection().CommandSet<CashierInvoice>().SqlProvider
                 .FormatUpdate(inv).SqlString.Trim();
             Assert.Equal(expected, actual);
         }
