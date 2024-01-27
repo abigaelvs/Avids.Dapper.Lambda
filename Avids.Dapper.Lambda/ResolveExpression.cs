@@ -84,9 +84,9 @@ namespace Avids.Dapper.Lambda
             return where;
         }
 
-        public UpdateEntityWhereExpression ResolveWhere(object obj)
+        public UpdateEntityWhereExpression ResolveWhere<T>(Expression<Func<T, T>> updateExpression)
         {
-            UpdateEntityWhereExpression where = new UpdateEntityWhereExpression(obj, ProviderOption);
+            UpdateEntityWhereExpression where = new UpdateEntityWhereExpression(updateExpression, ProviderOption);
 
             return where;
         }

@@ -1,6 +1,13 @@
-﻿using System.Reflection;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Linq;
+using System.Reflection;
 
 using Avids.Dapper.Lambda.Extension;
+using Avids.Dapper.Lambda.Helper;
 using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.Expressions
@@ -9,52 +16,91 @@ namespace Avids.Dapper.Lambda.Expressions
     {
         public override string SqlCmd => _sqlCmd.Length > 0 ? $" WHERE {_sqlCmd} " : string.Empty;
 
-        private readonly object _obj;
+        private List<string> Fields { get; set; } = new List<string>();
 
         /// <summary>
         /// Update Entity Where Expression Builder
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public UpdateEntityWhereExpression(object obj, ProviderOption providerOption)
+        public UpdateEntityWhereExpression(LambdaExpression expression, ProviderOption providerOption)
             : base("", providerOption)
         {
-            _obj = obj;
-            Resolve();
+            Visit(expression);
         }
 
         /// <summary>
-        /// Resolve Update Entity Where Expression
+        /// Visit Member for Update Expression
         /// </summary>
-        public void Resolve()
+        /// <param name="node"></param>
+        /// <returns></returns>
+        protected override Expression VisitMember(MemberExpression node)
         {
-            PropertyInfo[] propertyInfos = _obj.GetKeyProperties();
-            int i = 0;
-            foreach (PropertyInfo propertyInfo in propertyInfos)
+            MemberExpression memberInitExpression = node;
+
+            object entity = ((ConstantExpression)TrimExpression.Trim(memberInitExpression)).Value;
+
+            PropertyInfo[] properties = memberInitExpression.Type.GetProperties();
+
+            foreach (PropertyInfo item in properties)
             {
-                if (i > 0) _sqlCmd.Append(" AND ");
-                string fieldName = _providerOption.CombineFieldName(propertyInfo.GetColumnAttributeName());
-                _sqlCmd.Append(fieldName);
-                _sqlCmd.Append(" = ");
-                SetParam(propertyInfo.Name, propertyInfo.GetValue(_obj));
-                i++;
+                // Check if property has DatabaseGenerated attribute, if yes skip (not insert)
+                Console.WriteLine(item.Name);
+
+                if (!item.CustomAttributes.Any(b => b.AttributeType == typeof(KeyAttribute)) && 
+                    !item.CustomAttributes.Any(b => b.AttributeType == typeof(DatabaseGeneratedAttribute)))
+                    continue;
+
+                object value = item.GetValue(entity);
+                string fieldName = _providerOption.CombineFieldName(item.GetColumnAttributeName());
+                string paramName = $"{_parameterPrefix}{_prefix}{item.Name}";
+                Fields.Add($"{fieldName} = {paramName}");
+                Param.Add(paramName, value);
             }
+
+            _sqlCmd.Append(string.Join(" AND ", Fields));
+
+            return node;
         }
 
-        private void SetParam(string fileName, object value)
+        /// <summary>
+        /// Visit Member Init for Update Expression
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        protected override Expression VisitMemberInit(MemberInitExpression node)
         {
-            if (value != null)
+            MemberInitExpression memberInitExpression = node;
+
+            foreach (MemberBinding item in memberInitExpression.Bindings)
             {
-                if (!string.IsNullOrWhiteSpace(fileName))
+                MemberAssignment memberAssignment = (MemberAssignment)item;
+
+                if (!memberAssignment.Member.CustomAttributes.Any(b => b.AttributeType == typeof(KeyAttribute)) && 
+                    !memberAssignment.Member.CustomAttributes.Any(b => b.AttributeType == typeof(DatabaseGeneratedAttribute)))
+                    continue;
+
+                object value = null;
+                switch (memberAssignment.Expression.NodeType)
                 {
-                    _sqlCmd.Append(_parameterPrefix + fileName);
-                    Param.Add(fileName, value);
+                    case ExpressionType.Constant:
+                        ConstantExpression constantExpression = (ConstantExpression)memberAssignment.Expression;
+                        value = constantExpression.Value;
+                        break;
+                    case ExpressionType.MemberAccess:
+                        object constantValue = ((MemberExpression)memberAssignment.Expression).MemberToValue();
+                        value = constantValue;
+                        break;
                 }
+
+                string fieldName = _providerOption.CombineFieldName(memberAssignment.Member.GetColumnAttributeName());
+                string paramName = $"{_parameterPrefix}{_prefix}{memberAssignment.Member.Name}";
+                Fields.Add($"{fieldName} = {paramName}");
+                Param.Add(paramName, value);
             }
-            else
-            {
-                _sqlCmd.Append("NULL");
-            }
+
+            _sqlCmd.Append(string.Join(" AND ", Fields));
+            return node;
         }
     }
 }
