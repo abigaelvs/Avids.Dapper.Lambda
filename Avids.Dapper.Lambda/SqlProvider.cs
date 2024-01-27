@@ -1,6 +1,6 @@
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 
 using Dapper;
 
@@ -9,8 +9,6 @@ using Avids.Dapper.Lambda.Expressions;
 using Avids.Dapper.Lambda.Extension;
 using Avids.Dapper.Lambda.Helper;
 using Avids.Dapper.Lambda.Model;
-using System.Collections.Generic;
-using System;
 
 namespace Avids.Dapper.Lambda
 {
@@ -35,14 +33,33 @@ namespace Avids.Dapper.Lambda
         protected ProviderOption ProviderOption { get; set; }
 
         /// <summary>
+        /// Sql Parameters
+        /// </summary>
+        public DynamicParameters Params { get; set; }
+
+        /// <summary>
         /// Sql String result
         /// </summary>
         public string SqlString { get; set; }
 
         /// <summary>
-        /// Sql Parameters
+        /// Raw Sql String or Unprepared version of Sql String
         /// </summary>
-        public DynamicParameters Params { get; set; }
+        public string RawSqlString
+        {
+            get
+            {
+                string sql = $"{SqlString}";
+                foreach (string param in Params.ParameterNames)
+                {
+                    dynamic value = Params.Get<dynamic>(param);
+                    string strValue = value is string || value is char ? 
+                        $"{ProviderOption.OpenQuote}{value}{ProviderOption.CloseQuote}" : Convert.ToString(value);
+                    sql = sql.Replace($"@{param}", strValue);
+                }
+                return sql;
+            }
+        }
 
         public SqlProvider()
         {
