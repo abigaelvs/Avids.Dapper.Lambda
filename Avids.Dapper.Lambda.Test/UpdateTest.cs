@@ -33,7 +33,7 @@ namespace Avids.Dapper.Lambda.Test
         [Fact]
         public void TestUpdateWithMultipleKeyAttribute()
         {
-            string expected = @"UPDATE ""CashierInvoice""  SET  ""BillingNo""=@UPDATE_BillingNo"
+            string expected = @"UPDATE ""InvoiceBilling""  SET  ""BillingNo""=@UPDATE_BillingNo"
                 + @"    WHERE ""InvoiceId"" = @InvoiceId AND ""BillingId"" = @BillingId";
 
             InvoiceBilling inv = new();
@@ -41,7 +41,7 @@ namespace Avids.Dapper.Lambda.Test
             inv.BillingId = 1;
             inv.BillingNo = "BILL123";
 
-            string actual = new NpgsqlConnection().CommandSet<CashierInvoice>().SqlProvider
+            string actual = new NpgsqlConnection().CommandSet<InvoiceBilling>().SqlProvider
                 .FormatUpdate(inv).SqlString.Trim();
             Assert.Equal(expected, actual);
         }
