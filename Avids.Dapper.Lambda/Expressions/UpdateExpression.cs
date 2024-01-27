@@ -80,6 +80,9 @@ namespace Avids.Dapper.Lambda.Expressions
                         object constantValue = ((MemberExpression)memberAssignment.Expression).MemberToValue();
                         SetParam(fieldName, paramName, constantValue);
                         break;
+                    case ExpressionType.Convert:
+                        SetParam(fieldName, paramName, memberAssignment.Expression.ToConvertAndGetValue());
+                        break;
                 }
             }
 
