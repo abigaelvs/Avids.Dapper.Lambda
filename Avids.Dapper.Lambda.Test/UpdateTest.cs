@@ -31,6 +31,21 @@ namespace Avids.Dapper.Lambda.Test
         }
 
         [Fact]
+        public void TestUpdateWithExpression()
+        {
+            string expected = @"UPDATE ""Invoice""  SET  ""No""=@UPDATE_No , ""UpdatedDate""=@UPDATE_UpdatedDate"
+                + @"    WHERE ""Id"" = @Id";
+            string actual = new NpgsqlConnection().CommandSet<Invoice>().SqlProvider
+                .FormatUpdate<Invoice>(inv => new Invoice
+                {
+                    Id = 1,
+                    No = "IV123",
+                    UpdatedDate = DateTime.Now,
+                }).SqlString.Trim();
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void TestUpdateWithMultipleKeyAttribute()
         {
             string expected = @"UPDATE ""InvoiceBilling""  SET  ""BillingNo""=@UPDATE_BillingNo"
