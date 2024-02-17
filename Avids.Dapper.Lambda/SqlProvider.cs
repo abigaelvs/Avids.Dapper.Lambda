@@ -239,27 +239,24 @@ namespace Avids.Dapper.Lambda
             return this;
         }
 
+        public virtual SqlProvider FormatUpdate<T>(T entity)
+        {
+            return FormatUpdate<T>(a => entity);
+        }
+
         public virtual SqlProvider FormatUpdate<T>(Expression<Func<T, T>> updateExpression)
         {
             UpdateExpression update = ResolveExpression.ResolveUpdate(updateExpression);
 
-            WhereExpression where = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
-
-            string whereSql = where.SqlCmd;
-
-            Params = where.Param;
-            Params.AddDynamicParams(update.Param);
-
-            SqlString = $"UPDATE {FormatTableName(false)} {update.SqlCmd} {whereSql}";
-
-            return this;
-        }
-
-        public virtual SqlProvider FormatUpdate<T>(T entity)
-        {
-            UpdateExpression update = ResolveExpression.ResolveUpdate<T>(a => entity);
-
-            WhereExpression where = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
+            SqlCmdExpression where = null;
+            if (SetContext.WhereExpressions.Count > 0)
+            {
+                where = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
+            }
+            else
+            {
+                where = ResolveExpression.ResolveWhere(updateExpression);
+            }
 
             string whereSql = where.SqlCmd;
 

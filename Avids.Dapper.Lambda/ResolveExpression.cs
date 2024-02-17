@@ -84,6 +84,13 @@ namespace Avids.Dapper.Lambda
             return where;
         }
 
+        public UpdateEntityWhereExpression ResolveWhere<T>(Expression<Func<T, T>> updateExpression)
+        {
+            UpdateEntityWhereExpression where = new UpdateEntityWhereExpression(updateExpression, ProviderOption);
+
+            return where;
+        }
+
         /// <summary>
         /// Resolve Join
         /// </summary>
@@ -95,13 +102,6 @@ namespace Avids.Dapper.Lambda
             JoinExpression join = new JoinExpression(joinExpressions, prefix, ProviderOption, true);
             return join;
         }
-
-        //public static UpdateEntityWhereExpression ResolveWhere(LambdaExpression expression)
-        //{
-        //    var where = new UpdateEntityWhereExpression(expression, ProviderOption);
-        //    where.Resolve();
-        //    return where;
-        //}
 
         public string GetSelectAsName(SetContext context, MemberBinding a)
         {

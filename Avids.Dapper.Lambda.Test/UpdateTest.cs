@@ -14,7 +14,7 @@ namespace Avids.Dapper.Lambda.Test
                 + @"""StatusId""=@UPDATE_StatusId , ""PaymentStatusId""=@UPDATE_PaymentStatusId , "
                 + @"""CashierId""=@UPDATE_CashierId , ""UpdatedByUserId""=@UPDATE_UpdatedByUserId , "
                 + @"""CustomerId""=@UPDATE_CustomerId , ""CreatedDate""=@UPDATE_CreatedDate , "
-                + @"""UpdatedDate""=@UPDATE_UpdatedDate";
+                + @"""UpdatedDate""=@UPDATE_UpdatedDate    WHERE ""Id"" = @Id";
 
             Invoice inv = new();
             inv.No = "IV123";
@@ -26,6 +26,37 @@ namespace Avids.Dapper.Lambda.Test
             inv.UpdatedDate = null;
 
             string actual = new NpgsqlConnection().CommandSet<Invoice>().SqlProvider
+                .FormatUpdate(inv).SqlString.Trim();
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestUpdateWithExpression()
+        {
+            string expected = @"UPDATE ""Invoice""  SET  ""No""=@UPDATE_No , ""UpdatedDate""=@UPDATE_UpdatedDate"
+                + @"    WHERE ""Id"" = @Id";
+            string actual = new NpgsqlConnection().CommandSet<Invoice>().SqlProvider
+                .FormatUpdate<Invoice>(inv => new Invoice
+                {
+                    Id = 1,
+                    No = "IV123",
+                    UpdatedDate = DateTime.Now,
+                }).SqlString.Trim();
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestUpdateWithMultipleKeyAttribute()
+        {
+            string expected = @"UPDATE ""InvoiceBilling""  SET  ""BillingNo""=@UPDATE_BillingNo"
+                + @"    WHERE ""InvoiceId"" = @InvoiceId AND ""BillingId"" = @BillingId";
+
+            InvoiceBilling inv = new();
+            inv.InvoiceId = 1;
+            inv.BillingId = 1;
+            inv.BillingNo = "BILL123";
+
+            string actual = new NpgsqlConnection().CommandSet<InvoiceBilling>().SqlProvider
                 .FormatUpdate(inv).SqlString.Trim();
             Assert.Equal(expected, actual);
         }

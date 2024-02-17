@@ -39,6 +39,17 @@ namespace Avids.Dapper.Lambda.Extension
             return properties.First();
         }
 
+        public static PropertyInfo[] GetKeyProperties(this object obj)
+        {
+            PropertyInfo[] properties = obj.GetType().GetProperties()
+                .Where(a => a.GetCustomAttribute<KeyAttribute>() != null).ToArray();
+
+            if (!properties.Any())
+                throw new DapperExtensionException($"the {nameof(obj)} entity with no KeyAttribute Propertity");
+
+            return properties;
+        }
+
         /// <summary>
         /// Get PropertyInfo that contains KeyAttribute
         /// </summary>

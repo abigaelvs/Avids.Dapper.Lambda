@@ -89,6 +89,9 @@ namespace Avids.Dapper.Lambda.Expressions
                         object constantValue = ((MemberExpression)memberAssignment.Expression).MemberToValue();
                         value = constantValue;
                         break;
+                    case ExpressionType.Convert:
+                        value = memberAssignment.Expression.ToConvertAndGetValue();
+                        break;
                 }
 
                 string fieldName = memberAssignment.Member.GetColumnAttributeName();
