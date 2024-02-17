@@ -18,6 +18,59 @@ namespace Avids.Dapper.Lambda.Sample.Services
         {
             using NpgsqlConnection conn = new(cs);
 
+            //conn.CommandSet<Invoice>().Update(inv => new Invoice
+            //{
+            //    Id = 1,
+            //    No = "asda",
+            //    UpdatedDate = DateTime.Now,
+            //});
+
+            PaymentStatus stat = new();
+            stat.Id = 1;
+            stat.Name = "kwklnad";
+
+            PaymentStatus stat2 = new();
+            stat.Id = 2;
+            stat.Name = "wkwkland";
+
+            List<PaymentStatus> stats = new();
+            stats.Add(stat);
+            stats.Add(stat2);
+
+            Invoice inv = new();
+            inv.Id = 1;
+            inv.No = "IV123";
+            inv.CustomerId = 1;
+            inv.CashierId = 1;
+            inv.StatusId = 1;
+            inv.CreatedDate = DateTime.Now;
+            inv.UpdatedByUserId = null;
+            inv.UpdatedDate = null;
+
+            Invoice inv2 = new();
+            inv.Id = 2;
+            inv.No = "IV124";
+            inv.CustomerId = 1;
+            inv.CashierId = 1;
+            inv.StatusId = 1;
+            inv.CreatedDate = DateTime.Now;
+            inv.UpdatedByUserId = null;
+            inv.UpdatedDate = null;
+
+            List<Invoice> invoices2 = new();
+            invoices2.Add(inv);
+            invoices2.Add(inv2);
+
+            List<Invoice> newInvoices = invoices2.Select(inv => new Invoice
+            {
+                Id = inv.Id,
+                No = inv.No,
+            }).ToList();
+
+            conn.CommandSet<Invoice>().Insert(invoices2);
+
+            //conn.CommandSet<PaymentStatus>().Insert(stats);
+
             Option<SearchInvoiceList> invoices = conn.QuerySet<SearchInvoiceList>()
                 .InnerJoin((InvoiceStatus stat, SearchInvoiceList inv) => stat.Id == inv.Id)
                 .LeftJoin((Cashier cashier, SearchInvoiceList inv) => cashier.Id == inv.CashierId)

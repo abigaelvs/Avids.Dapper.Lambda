@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -79,13 +80,6 @@ namespace Avids.Dapper.Lambda.Core.SetC
             return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
-        public int Insert(Expression<Func<T, T>> insertExpression)
-        {
-            SqlProvider.FormatInsert(insertExpression);
-
-            return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
-        }
-
         /// <inheritdoc />
         public async Task<int> InsertAsync(T entity)
         {
@@ -94,9 +88,32 @@ namespace Avids.Dapper.Lambda.Core.SetC
             return await DbCon.ExecuteAsync(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }
 
+        /// <inheritdoc />
+        public int Insert(Expression<Func<T, T>> insertExpression)
+        {
+            SqlProvider.FormatInsert(insertExpression);
+
+            return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
+        }
+
+        /// <inheritdoc />
         public async Task<int> InsertAsync(Expression<Func<T, T>> insertExpression)
         {
             SqlProvider.FormatInsert(insertExpression);
+
+            return await DbCon.ExecuteAsync(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
+        }
+
+        public int Insert(IEnumerable<T> entities)
+        {
+            SqlProvider.FormatInsert(entities);
+
+            return DbCon.Execute(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
+        }
+
+        public async Task<int> InsertAsync(IEnumerable<T> entities)
+        {
+            SqlProvider.FormatInsert(entities);
 
             return await DbCon.ExecuteAsync(SqlProvider.SqlString, SqlProvider.Params, DbTransaction);
         }

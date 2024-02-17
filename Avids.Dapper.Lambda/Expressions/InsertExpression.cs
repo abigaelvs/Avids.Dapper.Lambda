@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections;
 using System.Reflection;
 using System.Linq.Expressions;
 using System.Collections.Generic;
@@ -29,6 +30,8 @@ namespace Avids.Dapper.Lambda.Expressions
             get => string.Join(",", Values);
         }
         private List<string> Values { get; set; } = new List<string>();
+        private List<string> TempValues { get; set; } = new List<string>();
+        private int ParameterCount { get; set; } = 1;
         public InsertExpression(LambdaExpression expression, ProviderOption providerOption)
             : base(null, providerOption)
         {
@@ -44,20 +47,50 @@ namespace Avids.Dapper.Lambda.Expressions
         {
             MemberExpression memberInitExpression = node;
 
-            object entity = ((ConstantExpression)TrimExpression.Trim(memberInitExpression)).Value;
+            object exprValue = ((ConstantExpression)TrimExpression.Trim(memberInitExpression)).Value;
 
-            PropertyInfo[] properties = memberInitExpression.Type.GetProperties();
+            bool isBulkInsert = typeof(IList).IsAssignableFrom(exprValue.GetType());
 
-            foreach (PropertyInfo item in properties)
+            List<object> entities = new List<object>() { };
+
+            if (isBulkInsert)
             {
-                // Check if property has DatabaseGenerated attribute, if yes skip (not insert)
-                if (item.CustomAttributes.Any(b => b.AttributeType == typeof(DatabaseGeneratedAttribute)))
-                    continue;
+                IList listValue = (IList)exprValue;
+                foreach (object item in listValue) entities.Add(item);
+            }
+            else
+            {
+                entities.Add(exprValue);
+            }
 
-                object value = item.GetValue(entity);
-                string fieldName = item.GetColumnAttributeName();
-                string paramName = item.Name;
-                SetParam(fieldName, paramName, value);
+            bool needParameterCount = entities.Count > 1;
+            foreach (object e in entities)
+            {
+                bool needField = Fields.Count < 1;
+                PropertyInfo[] properties = e.GetType().GetProperties();
+                foreach (PropertyInfo item in properties)
+                {
+                    // Check if property has DatabaseGenerated attribute, if yes skip (not insert)
+                    if (item.CustomAttributes.Any(b => b.AttributeType == typeof(DatabaseGeneratedAttribute)))
+                        continue;
+
+                    object value = item.GetValue(e);
+                    string paramName = item.Name;
+                    string count = needParameterCount ? ParameterCount.ToString() : "";
+                    string valueParam = $"{_parameterPrefix}{_prefix}{paramName}{count}";
+                    TempValues.Add(valueParam);
+                    Param.Add(valueParam, value);
+
+                    if (needField)
+                    {
+                        string fieldName = _providerOption.CombineFieldName(item.GetColumnAttributeName());
+                        Fields.Add(fieldName);
+                    }
+                }
+
+                string values = $"({string.Join(",", TempValues)})";
+                TempValues.Clear();
+                Values.Add(values);
             }
 
             GenerateSql();
@@ -121,7 +154,7 @@ namespace Avids.Dapper.Lambda.Expressions
         /// </summary>
         private void GenerateSql()
         {
-            _sqlCmd.AppendFormat("({0}) VALUES ({1})", FieldsStr, ValuesStr);
+            _sqlCmd.AppendFormat("({0}) VALUES {1}", FieldsStr, ValuesStr);
         }
     }
 }

@@ -190,10 +190,16 @@ namespace Avids.Dapper.Lambda
 
         public virtual SqlProvider FormatInsert<T>(T entity)
         {
-            return FormatInsert<T>(a => entity);
+            List<T> entities = new List<T>() { entity };
+            return FormatInsert(entities);
         }
 
-        public virtual SqlProvider FormatInsert<T>(Expression<Func<T, T>> insertExpression)
+        public virtual SqlProvider FormatInsert<T>(List<T> entities) 
+        {
+            return FormatInsert<T>(a => entities);
+        }
+
+        public virtual SqlProvider FormatInsert<T>(Expression<Func<T, List<T>>> insertExpression)
         {
             InsertExpression insert = ResolveExpression.ResolveInsert<T>(insertExpression);
             Params = insert.Param;
