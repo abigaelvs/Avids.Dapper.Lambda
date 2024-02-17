@@ -3,15 +3,15 @@
 using Avids.Dapper.Lambda.Core.SetC;
 using Avids.Dapper.Lambda.Test.Entity;
 
-namespace Avids.Dapper.Lambda.Test
+namespace Avids.Dapper.Lambda.Test.Tests
 {
     public class InsertTest
     {
         [Fact]
         public void TestInsertInto()
         {
-            string expected = @"INSERT INTO ""Invoice"" (""Id"",""No"",""StatusId""," 
-                + @"""PaymentStatusId"",""CashierId"",""UpdatedByUserId"",""CustomerId""," 
+            string expected = @"INSERT INTO ""Invoice"" (""Id"",""No"",""StatusId"","
+                + @"""PaymentStatusId"",""CashierId"",""UpdatedByUserId"",""CustomerId"","
                 + @"""CreatedDate"",""UpdatedDate"") VALUES (@Id,@No,@StatusId,@PaymentStatusId,"
                 + @"@CashierId,@UpdatedByUserId,@CustomerId,@CreatedDate,@UpdatedDate)";
 

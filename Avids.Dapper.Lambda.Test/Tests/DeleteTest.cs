@@ -3,7 +3,7 @@
 using Avids.Dapper.Lambda.Core.SetC;
 using Avids.Dapper.Lambda.Test.Entity;
 
-namespace Avids.Dapper.Lambda.Test
+namespace Avids.Dapper.Lambda.Test.Tests
 {
     public class DeleteTest
     {

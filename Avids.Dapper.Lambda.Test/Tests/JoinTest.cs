@@ -1,7 +1,7 @@
 ﻿using Avids.Dapper.Lambda.Test.Entity;
 using Npgsql;
 
-namespace Avids.Dapper.Lambda.Test
+namespace Avids.Dapper.Lambda.Test.Tests
 {
     public class JoinTest
     {
