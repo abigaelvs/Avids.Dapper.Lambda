@@ -73,7 +73,9 @@ namespace Avids.Dapper.Lambda.Expressions
             if (node.Left.NodeType == ExpressionType.Call && node.Right.NodeType == ExpressionType.Constant)
             {
                 MethodCallExpression call = node.Left as MethodCallExpression;
-                NotLike(call);
+                if (ExpressionExtension.IsMethodCallList(call)) In(call, true);
+                else NotLike(call);
+
                 return node;
             }
 
@@ -226,7 +228,7 @@ namespace Avids.Dapper.Lambda.Expressions
         /// IN sql function
         /// </summary>
         /// <param name="node"></param>
-        private void In(MethodCallExpression node)
+        private void In(MethodCallExpression node, bool notIn = false)
         {
             IList arrayValue = (IList)((ConstantExpression)node.Object).Value;
             if (arrayValue.Count == 0)  
@@ -245,7 +247,12 @@ namespace Avids.Dapper.Lambda.Expressions
                 if (i < arrayValue.Count - 1) ParameterCount++;
             }
             string paramName = $"({string.Join(", ", paramNames)})";
-            _sqlCmd.AppendFormat(" IN {0}", paramName);
+
+            List<string> keywords  = new List<string>();
+            if (notIn) keywords.Add("NOT");
+            keywords.Add("IN");
+            keywords.Add(paramName);
+            _sqlCmd.AppendFormat(" {0}", string.Join(" ", keywords));
         }
     }
 }
