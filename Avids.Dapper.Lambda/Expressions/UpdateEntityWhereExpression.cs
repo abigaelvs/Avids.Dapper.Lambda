@@ -26,7 +26,9 @@ namespace Avids.Dapper.Lambda.Expressions
         public UpdateEntityWhereExpression(LambdaExpression expression, ProviderOption providerOption)
             : base("", providerOption)
         {
+            _sqlCmd.Append("(");
             Visit(expression);
+            _sqlCmd.Append(")");
         }
 
         /// <summary>

@@ -37,7 +37,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
                 + @"""PaymentStatusId"",""CashierId"",""UpdatedByUserId"",""CustomerId"","
                 + @"""CreatedDate"",""UpdatedDate"") SELECT @Id,@No,@StatusId,@PaymentStatusId,"
                 + @"@CashierId,@UpdatedByUserId,@CustomerId,@CreatedDate,@UpdatedDate "
-                + @"WHERE NOT EXISTS(SELECT 1 FROM ""Invoice"" WHERE ""Id"" = @INT_Id1)";
+                + @"WHERE NOT EXISTS(SELECT 1 FROM ""Invoice"" WHERE (""Id"" = @INT_Id1))";
 
             Invoice inv = new();
             inv.Id = 1;

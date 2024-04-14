@@ -41,7 +41,10 @@ namespace Avids.Dapper.Lambda.Expressions
             {
                 Where curr = whereExpressions.Dequeue();
                 if (curr.WhereType != null) _sqlCmd.Append($" {curr.WhereType} ");
+
+                _sqlCmd.Append("(");
                 Visit(TrimExpression.Trim(curr.WhereExpression));
+                _sqlCmd.Append(")");
             }
         }
 

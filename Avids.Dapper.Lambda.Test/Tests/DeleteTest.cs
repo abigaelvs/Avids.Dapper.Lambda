@@ -19,7 +19,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void TestDeleteWithWhere()
         {
-            string expected = @"DELETE FROM ""Invoice"" WHERE ""Id"" = @Id1";
+            string expected = @"DELETE FROM ""Invoice"" WHERE (""Id"" = @Id1)";
             string actual = (new NpgsqlConnection().CommandSet<Invoice>()
                 .Where(inv => inv.Id == 1) as Command<Invoice>)
                 .SqlProvider.FormatDelete().SqlString.Trim();

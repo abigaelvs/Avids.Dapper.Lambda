@@ -14,7 +14,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
                 + @"""StatusId""=@UPDATE_StatusId , ""PaymentStatusId""=@UPDATE_PaymentStatusId , "
                 + @"""CashierId""=@UPDATE_CashierId , ""UpdatedByUserId""=@UPDATE_UpdatedByUserId , "
                 + @"""CustomerId""=@UPDATE_CustomerId , ""CreatedDate""=@UPDATE_CreatedDate , "
-                + @"""UpdatedDate""=@UPDATE_UpdatedDate    WHERE ""Id"" = @Id";
+                + @"""UpdatedDate""=@UPDATE_UpdatedDate    WHERE (""Id"" = @Id)";
 
             Invoice inv = new();
             inv.No = "IV123";
@@ -34,7 +34,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         public void TestUpdateWithExpression()
         {
             string expected = @"UPDATE ""Invoice""  SET  ""No""=@UPDATE_No , ""UpdatedDate""=@UPDATE_UpdatedDate"
-                + @"    WHERE ""Id"" = @Id";
+                + @"    WHERE (""Id"" = @Id)";
             string actual = new NpgsqlConnection().CommandSet<Invoice>().SqlProvider
                 .FormatUpdate<Invoice>(inv => new Invoice
                 {
@@ -49,7 +49,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         public void TestUpdateWithMultipleKeyAttribute()
         {
             string expected = @"UPDATE ""InvoiceBilling""  SET  ""BillingNo""=@UPDATE_BillingNo"
-                + @"    WHERE ""InvoiceId"" = @InvoiceId AND ""BillingId"" = @BillingId";
+                + @"    WHERE (""InvoiceId"" = @InvoiceId AND ""BillingId"" = @BillingId)";
 
             InvoiceBilling inv = new();
             inv.InvoiceId = 1;
@@ -68,7 +68,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
                     + @"""StatusId""=@UPDATE_StatusId , ""PaymentStatusId""=@UPDATE_PaymentStatusId , "
                     + @"""CashierId""=@UPDATE_CashierId , ""UpdatedByUserId""=@UPDATE_UpdatedByUserId , "
                     + @"""CustomerId""=@UPDATE_CustomerId , ""CreatedDate""=@UPDATE_CreatedDate , "
-                    + @"""UpdatedDate""=@UPDATE_UpdatedDate   WHERE ""Id"" = @Id1";
+                    + @"""UpdatedDate""=@UPDATE_UpdatedDate   WHERE (""Id"" = @Id1)";
 
             Invoice inv = new();
             inv.No = "IV123";
@@ -93,7 +93,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
                     + @"""CashierId""=@UPDATE_CashierId , ""UpdatedByUserId""=@UPDATE_UpdatedByUserId , "
                     + @"""CustomerId""=@UPDATE_CustomerId , ""CreatedDate""=@UPDATE_CreatedDate , "
                     + @"""UpdatedDate""=@UPDATE_UpdatedDate   WHERE ""Id"" IN "
-                    + @"(SELECT ""Id"" FROM ""Invoice"" WHERE ""Id"" = @Id1  FOR UPDATE SKIP LOCKED) "
+                    + @"(SELECT ""Id"" FROM ""Invoice"" WHERE (""Id"" = @Id1)  FOR UPDATE SKIP LOCKED) "
                     + @"RETURNING *";
 
             Invoice inv = new();
