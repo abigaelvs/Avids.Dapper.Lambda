@@ -10,7 +10,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         {
             List<long> ids = new() { 1, 2, 3 };
             List<string> nos = new() { "IV1", "IV2" };
-            string expected = @"SELECT  * FROM ""Invoice""   WHERE (""Id"" = @Id1 AND ""StatusId"" > @StatusId2 "
+            string expected = @"SELECT * FROM ""Invoice""   WHERE (""Id"" = @Id1 AND ""StatusId"" > @StatusId2 "
                 + @"AND ""StatusId"" < @StatusId3 OR ""StatusId"" <= @StatusId4 AND ""StatusId"" >= @StatusId5 "
                 + @"AND ""Id"" != @Id6 OR ""No"" LIKE @No7 AND ""No"" LIKE @No8 AND ""No"" LIKE @No9 "
                 + @"OR ""No"" NOT LIKE @No10 AND ""No"" NOT LIKE @No11 AND ""No"" NOT LIKE @No12 "

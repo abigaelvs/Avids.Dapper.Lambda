@@ -141,8 +141,11 @@ namespace Avids.Dapper.Lambda
         public string ResolveSelect(SetContext context, bool isNeedSelect = true)
         {
             string statement = "";
-            if (isNeedSelect) statement += "SELECT ";
-            if (context.Distinct) statement += "DISTINCT";
+            if (isNeedSelect)
+            {
+                statement += "SELECT";
+                if (context.Distinct) statement += " DISTINCT";
+            }
             string selectFormat = isNeedSelect ? $"{statement}" + " {0}" : "{0}";
             string selectSql = "";
 

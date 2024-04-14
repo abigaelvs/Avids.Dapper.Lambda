@@ -10,7 +10,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void TestSelectAll()
         {
-            string expected = @"SELECT  * FROM ""Invoice""";
+            string expected = @"SELECT * FROM ""Invoice""";
             string actual = new NpgsqlConnection().QuerySet<Invoice>().SqlProvider.FormatToList<Invoice>()
                 .SqlString.Trim();
             Assert.Equal(expected, actual);
@@ -19,7 +19,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void MsSqlTestSelectAll()
         {
-            string expected = @"SELECT  * FROM [Invoice]";
+            string expected = @"SELECT * FROM [Invoice]";
             string actual = new SqlConnection().QuerySet<Invoice>().SqlProvider.FormatToList<Invoice>().SqlString.Trim();
             Assert.Equal(expected, actual);
         }
@@ -27,7 +27,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void TestSelectCertainField()
         {
-            string expected = @"SELECT  ""Id"", ""No"" FROM ""Invoice""";
+            string expected = @"SELECT ""Id"", ""No"" FROM ""Invoice""";
             string actual = new NpgsqlConnection().QuerySet<Invoice>()
                 .Select(inv => new Invoice { Id = inv.Id, No = inv.No })
                 .SqlProvider.FormatToList<Invoice>().SqlString.Trim();
@@ -37,7 +37,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void MsSqlTestSelectCertainField()
         {
-            string expected = @"SELECT  [Id], [No] FROM [Invoice]";
+            string expected = @"SELECT [Id], [No] FROM [Invoice]";
             string actual = new SqlConnection().QuerySet<Invoice>()
                 .Select(inv => new Invoice { Id = inv.Id, No = inv.No })
                 .SqlProvider.FormatToList<Invoice>().SqlString.Trim();

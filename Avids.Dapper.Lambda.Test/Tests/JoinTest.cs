@@ -8,7 +8,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void TestJoin()
         {
-            string expected = @"SELECT  ""Cashier"".""Id"" AS ""CashierId"", ""Cashier"".""Name"" AS ""CreatedBy"", "
+            string expected = @"SELECT ""Cashier"".""Id"" AS ""CashierId"", ""Cashier"".""Name"" AS ""CreatedBy"", "
                 + @"""Customer"".""Id"" AS ""CustomerId"", ""Customer"".""Name"" AS ""CustomerName"", "
                 + @"""InvoiceStatus"".""Id"" AS ""StatusId"", ""InvoiceStatus"".""Name"" AS ""StatusName"", "
                 + @"""PaymentStatus"".""Id"" AS ""PaymentStatusId"", ""PaymentStatus"".""Name"" AS ""PaymentStatusName"" "
