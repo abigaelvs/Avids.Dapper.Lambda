@@ -7,6 +7,27 @@ namespace Avids.Dapper.Lambda.Core.Interfaces
     public interface ICommand<T>
     {
         /// <summary>
+        /// Create Where statement
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        ICommand<T> Where(Expression<Func<T, bool>> predicate);
+
+        /// <summary>
+        /// Create Where AND statement
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        ICommand<T> And(Expression<Func<T, bool>> predicate);
+
+        /// <summary>
+        /// Create Where OR statement
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        ICommand<T> Or(Expression<Func<T, bool>> predicate);
+
+        /// <summary>
         /// Create Update statement from object
         /// </summary>
         /// <param name="entity"></param>

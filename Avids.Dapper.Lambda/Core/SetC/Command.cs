@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dapper;
 
 using Avids.Dapper.Lambda.Core.Interfaces;
+using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.Core.SetC
 {
@@ -21,6 +22,33 @@ namespace Avids.Dapper.Lambda.Core.SetC
 
         protected Command(SqlProvider sqlProvider, IDbConnection dbCon) : base(dbCon, sqlProvider)
         {
+        }
+
+        public ICommand<T> Where(Expression<Func<T, bool>> predicate)
+        {
+            Where where = new Where();
+            where.WhereType = SqlProvider.SetContext.WhereExpressions.Count > 0 ? (EWhere?)EWhere.AND : null;
+            where.WhereExpression = predicate;
+            SqlProvider.SetContext.WhereExpressions.Enqueue(where);
+            return this;
+        }
+
+        public ICommand<T> And(Expression<Func<T, bool>> predicate)
+        {
+            Where where = new Where();
+            where.WhereType = EWhere.AND;
+            where.WhereExpression = predicate;
+            SqlProvider.SetContext.WhereExpressions.Enqueue(where);
+            return this;
+        }
+
+        public ICommand<T> Or(Expression<Func<T, bool>> predicate)
+        {
+            Where where = new Where();
+            where.WhereType = EWhere.OR;
+            where.WhereExpression = predicate;
+            SqlProvider.SetContext.WhereExpressions.Enqueue(where);
+            return this;
         }
 
         /// <inheritdoc />

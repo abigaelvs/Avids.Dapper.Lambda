@@ -110,5 +110,55 @@ namespace Avids.Dapper.Lambda.Test.Tests
                 .SqlProvider.FormatUpdateSelect(inv).SqlString.Trim();
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void TestBulkUpdate()
+        {
+            string expected = @"UPDATE ""Invoice""  SET  ""No""=@UPDATE_No , "
+                + @"""StatusId""=@UPDATE_StatusId , ""PaymentStatusId""=@UPDATE_PaymentStatusId , "
+                + @"""CashierId""=@UPDATE_CashierId , ""UpdatedByUserId""=@UPDATE_UpdatedByUserId , "
+                + @"""CustomerId""=@UPDATE_CustomerId , ""CreatedDate""=@UPDATE_CreatedDate , "
+                + @"""UpdatedDate""=@UPDATE_UpdatedDate   WHERE (""Id"" = @Id1 AND ""StatusId"" = @StatusId2) OR (""Id"" = @Id3 AND ""StatusId"" = @StatusId4)";
+
+            Invoice inv = new();
+            inv.No = "IV123";
+            inv.CustomerId = 1;
+            inv.CashierId = 1;
+            inv.StatusId = 1;
+            inv.CreatedDate = DateTime.Now;
+            inv.UpdatedByUserId = null;
+            inv.UpdatedDate = null;
+
+            string actual = (new NpgsqlConnection().CommandSet<Invoice>()
+                .Where(inv => inv.Id == 1 && inv.StatusId == 2)
+                .Or(inv => inv.Id == 3 && inv.StatusId == 4) as Command<Invoice>)
+                .SqlProvider.FormatUpdate(inv).SqlString.Trim();
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestBulkUpdateWithExpression()
+        {
+            string expected = @"UPDATE ""Invoice""  SET  ""No""=@UPDATE_No"
+                + @"   WHERE (""Id"" = @Id1 AND ""StatusId"" = @StatusId2) OR (""Id"" = @Id3 AND ""StatusId"" = @StatusId4)";
+
+            Invoice inv = new();
+            inv.No = "IV123";
+            inv.CustomerId = 1;
+            inv.CashierId = 1;
+            inv.StatusId = 1;
+            inv.CreatedDate = DateTime.Now;
+            inv.UpdatedByUserId = null;
+            inv.UpdatedDate = null;
+
+            string actual = (new NpgsqlConnection().CommandSet<Invoice>()
+                .Where(inv => inv.Id == 1 && inv.StatusId == 2)
+                .Or(inv => inv.Id == 3 && inv.StatusId == 4) as Command<Invoice>)
+                .SqlProvider.FormatUpdate<Invoice>(inv => new Invoice
+                {
+                    No = "IV123"
+                }).SqlString.Trim();
+            Assert.Equal(expected, actual);
+        }
     }
 }

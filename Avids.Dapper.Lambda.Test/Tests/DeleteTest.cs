@@ -25,5 +25,17 @@ namespace Avids.Dapper.Lambda.Test.Tests
                 .SqlProvider.FormatDelete().SqlString.Trim();
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void TestBulkDelete()
+        {
+            string expected = @"DELETE FROM ""Invoice"" WHERE (""Id"" = @Id1 AND " +
+            @"""StatusId"" = @StatusId2) OR (""Id"" = @Id3 AND ""StatusId"" = @StatusId4)";
+            string actual = (new NpgsqlConnection().CommandSet<Invoice>()
+                .Where(inv => inv.Id == 1 && inv.StatusId == 2)
+                .Or(inv => inv.Id == 3 && inv.StatusId == 4) as Command<Invoice>)
+                .SqlProvider.FormatDelete().SqlString.Trim();
+            Assert.Equal(expected, actual);
+        }
     }
 }
