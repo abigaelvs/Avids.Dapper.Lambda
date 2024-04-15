@@ -10,7 +10,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void TestExists()
         {
-            string expected = @"SELECT 1 FROM ""Invoice""  WHERE (""Id"" = @Id1) LIMIT 1";
+            string expected = @"SELECT 1 FROM ""Invoice"" WHERE (""Id"" = @Id1) LIMIT 1";
             string actual = (new NpgsqlConnection().CommandSet<Invoice>()
                 .Where(inv => inv.Id == 1) as Command<Invoice>).SqlProvider
                 .FormatExists().SqlString.Trim();

@@ -15,7 +15,7 @@ namespace Avids.Dapper.Lambda.Expressions
     /// </summary>
     public class UpdateExpression : SqlCmdExpression
     {
-        public override string SqlCmd => _sqlCmd.Length > 0 ? $" SET {_sqlCmd} " : string.Empty;
+        public override string SqlCmd => _sqlCmd.Length > 0 ? $"SET {_sqlCmd}" : string.Empty;
 
         public UpdateExpression(LambdaExpression expression, ProviderOption providerOption)
             : base("UPDATE_", providerOption)
@@ -42,7 +42,7 @@ namespace Avids.Dapper.Lambda.Expressions
                     continue;
 
                 if (_sqlCmd.Length > 0)
-                    _sqlCmd.Append(",");
+                    _sqlCmd.Append(", ");
 
                 string paramName = item.Name;
                 object value = item.GetValue(entity);
@@ -71,7 +71,7 @@ namespace Avids.Dapper.Lambda.Expressions
                     continue;
 
                 if (_sqlCmd.Length > 0)
-                    _sqlCmd.Append(",");
+                    _sqlCmd.Append(", ");
 
                 string paramName = memberAssignment.Member.Name;
                 string fieldName = _providerOption.CombineFieldName(memberAssignment.Member.GetColumnAttributeName());
@@ -103,7 +103,7 @@ namespace Avids.Dapper.Lambda.Expressions
         private void SetParam(string fieldName, string paramName, object value)
         {
             string n = $"{_parameterPrefix}{_prefix}{paramName}";
-            _sqlCmd.AppendFormat(" {0}={1} ", fieldName, n);
+            _sqlCmd.AppendFormat("{0}={1}", fieldName, n);
             Param.Add(n, value);
         }
     }

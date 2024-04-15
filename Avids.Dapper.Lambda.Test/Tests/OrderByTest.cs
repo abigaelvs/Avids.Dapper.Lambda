@@ -9,7 +9,7 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void TestOrderBy()
         {
-            string expected = @"SELECT * FROM ""Invoice""     ORDER BY ""Id"" ASC, ""No"" DESC";
+            string expected = @"SELECT * FROM ""Invoice"" ORDER BY ""Id"" ASC, ""No"" DESC";
             string result = new NpgsqlConnection().QuerySet<Invoice>().OrderBy(inv => inv.Id)
                 .OrderByDesc(inv => inv.No).SqlProvider.FormatToList<Invoice>().SqlString.Trim();
             Assert.Equal(expected, result);

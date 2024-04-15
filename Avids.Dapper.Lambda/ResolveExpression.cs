@@ -250,7 +250,7 @@ namespace Avids.Dapper.Lambda
             {
                 case ExpressionType.MemberAccess:
                     string columnName = ((MemberExpression)selector.Body).Member.GetColumnAttributeName();
-                    selectSql = $" SELECT {ProviderOption.FunctionIsNull}(SUM({ProviderOption.CombineFieldName(columnName)}),0)  ";
+                    selectSql = $"SELECT {ProviderOption.FunctionIsNull}(SUM({ProviderOption.CombineFieldName(columnName)}),0)";
                     break;
                 case ExpressionType.MemberInit:
                     throw new DapperExtensionException("The Expression Type is not supported");

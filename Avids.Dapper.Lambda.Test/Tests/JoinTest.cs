@@ -12,11 +12,11 @@ namespace Avids.Dapper.Lambda.Test.Tests
                 + @"""Customer"".""Id"" AS ""CustomerId"", ""Customer"".""Name"" AS ""CustomerName"", "
                 + @"""InvoiceStatus"".""Id"" AS ""StatusId"", ""InvoiceStatus"".""Name"" AS ""StatusName"", "
                 + @"""PaymentStatus"".""Id"" AS ""PaymentStatusId"", ""PaymentStatus"".""Name"" AS ""PaymentStatusName"" "
-                + @"FROM ""Invoice""  "
+                + @"FROM ""Invoice"" "
                 + @"INNER JOIN ""InvoiceStatus"" ON ""InvoiceStatus"".""Id"" = ""Invoice"".""Id"" "
                 + @"LEFT JOIN ""Cashier"" ON ""Cashier"".""Id"" = ""Invoice"".""CashierId"" "
                 + @"RIGHT JOIN ""Customer"" ON ""Customer"".""Id"" = ""Invoice"".""CustomerId"" "
-                + @"FULL JOIN ""PaymentStatus"" ON ""PaymentStatus"".""Id"" = ""Invoice"".""PaymentStatusId""  "
+                + @"FULL JOIN ""PaymentStatus"" ON ""PaymentStatus"".""Id"" = ""Invoice"".""PaymentStatusId"" "
                 + @"WHERE (""InvoiceStatus"".""Id"" = @Id1)";
             string actual = new NpgsqlConnection().QuerySet<SearchInvoiceList>()
                 .InnerJoin((InvoiceStatus stat, SearchInvoiceList inv) => stat.Id == inv.Id)

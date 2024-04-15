@@ -71,12 +71,12 @@ namespace Avids.Dapper.Lambda
         {
             string selectSql = ResolveExpression.ResolveSelect(SetContext);
 
-            string fromSql = FormatTableName();
+            string fromTableSql = FormatTableName();
 
             JoinExpression joinParams = ResolveExpression.ResolveJoin(SetContext.JoinExpressions);
             string joinSql = joinParams.SqlCmd;
 
-            string noLockSql = ResolveExpression.ResolveWithNoLock(SetContext.NoLock);
+            string nolockSql = ResolveExpression.ResolveWithNoLock(SetContext.NoLock);
 
             WhereExpression whereParams = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
 
@@ -86,9 +86,18 @@ namespace Avids.Dapper.Lambda
 
             string groupBySql = ResolveExpression.ResolveGroupBy(SetContext);
 
-            string orderBySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList);
+            string orderbySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList);
 
-            SqlString = $"{selectSql} {fromSql} {joinSql} {noLockSql} {whereSql} {groupBySql} {orderBySql} LIMIT 1";
+            string limitSql = "LIMIT 1";
+
+            if (!selectSql.Equals(string.Empty)) SqlString += $"{selectSql} ";
+            if (!fromTableSql.Equals(string.Empty)) SqlString += $"{fromTableSql} ";
+            if (!joinSql.Equals(string.Empty)) SqlString += $"{joinSql} ";
+            if (!nolockSql.Equals(string.Empty)) SqlString += $"{nolockSql} ";
+            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql} ";
+            if (!groupBySql.Equals(string.Empty)) SqlString += $"{groupBySql} ";
+            if (!orderbySql.Equals(string.Empty)) SqlString += $"{orderbySql} ";
+            if (!limitSql.Equals(string.Empty)) SqlString += $"{limitSql} ";
 
             return this;
         }
@@ -118,10 +127,18 @@ namespace Avids.Dapper.Lambda
             int? limitNum = SetContext.LimitNum;
             int? offsetNum = SetContext.OffsetNum;
 
-            string limitSql = limitNum.HasValue ? $"LIMIT {limitNum}" : "";
-            string offsetSql = offsetNum.HasValue ? $"OFFSET {offsetNum}" : "";
+            string limitSql = limitNum.HasValue ? $"LIMIT {limitNum}" : string.Empty;
+            string offsetSql = offsetNum.HasValue ? $"OFFSET {offsetNum}" : string.Empty;
 
-            SqlString = $"{selectSql} {fromTableSql} {joinSql} {nolockSql} {whereSql} {groupBySql} {orderbySql} {limitSql} {offsetSql}";
+            if (!selectSql.Equals(string.Empty)) SqlString += $"{selectSql} ";
+            if (!fromTableSql.Equals(string.Empty)) SqlString += $"{fromTableSql} ";
+            if (!joinSql.Equals(string.Empty)) SqlString += $"{joinSql} ";
+            if (!nolockSql.Equals(string.Empty)) SqlString += $"{nolockSql} ";
+            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql} ";
+            if (!groupBySql.Equals(string.Empty)) SqlString += $"{groupBySql} ";
+            if (!orderbySql.Equals(string.Empty)) SqlString += $"{orderbySql} ";
+            if (!limitSql.Equals(string.Empty)) SqlString += $"{limitSql} ";
+            if (!offsetSql.Equals(string.Empty)) SqlString += $"{offsetSql} ";
 
             return this;
         }
@@ -146,8 +163,22 @@ namespace Avids.Dapper.Lambda
 
             Params = whereParams.Param;
 
-            SqlString = $"SELECT COUNT(1) {fromTableSql} {nolockSql} {whereSql};";
-            SqlString += $"{selectSql} {fromTableSql} {nolockSql} {whereSql} {groupBySql} {orderbySql} LIMIT {pageSize} OFFSET  {(pageIndex - 1) * pageSize}";
+            string limitSql = $"LIMIT {pageSize}";
+            string offsetSql = $"OFFSET {(pageIndex - 1) * pageSize}";
+
+            SqlString += "SELECT COUNT(1)";
+            if (!fromTableSql.Equals(string.Empty)) SqlString += $"{fromTableSql} ";
+            if (!nolockSql.Equals(string.Empty)) SqlString += $"{nolockSql} ";
+            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql};";
+
+            if (!selectSql.Equals(string.Empty)) SqlString += $"{selectSql} ";
+            if (!fromTableSql.Equals(string.Empty)) SqlString += $"{fromTableSql} ";
+            if (!nolockSql.Equals(string.Empty)) SqlString += $"{nolockSql} ";
+            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql} ";
+            if (!groupBySql.Equals(string.Empty)) SqlString += $"{groupBySql} ";
+            if (!orderbySql.Equals(string.Empty)) SqlString += $"{orderbySql} ";
+            if (!limitSql.Equals(string.Empty)) SqlString += $"{limitSql} ";
+            if (!offsetSql.Equals(string.Empty)) SqlString += $"{offsetSql} ";
 
             return this;
         }
@@ -166,7 +197,10 @@ namespace Avids.Dapper.Lambda
 
             Params = whereParams.Param;
 
-            SqlString = $"{selectSql} {fromTableSql} {nolockSql} {whereSql} ";
+            if (!selectSql.Equals(string.Empty)) SqlString += $"{selectSql} ";
+            if (!fromTableSql.Equals(string.Empty)) SqlString += $"{fromTableSql} ";
+            if (!nolockSql.Equals(string.Empty)) SqlString += $"{nolockSql} ";
+            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql} ";
 
             return this;
         }
@@ -185,7 +219,13 @@ namespace Avids.Dapper.Lambda
 
             Params = whereParams.Param;
 
-            SqlString = $"{selectSql} {fromTableSql} {nolockSql} {whereSql} LIMIT 1";
+            string limitSql = "LIMIT 1";
+
+            if (!selectSql.Equals(string.Empty)) SqlString += $"{selectSql} ";
+            if (!fromTableSql.Equals(string.Empty)) SqlString += $"{fromTableSql} ";
+            if (!nolockSql.Equals(string.Empty)) SqlString += $"{nolockSql} ";
+            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql} ";
+            if (!limitSql.Equals(string.Empty)) SqlString += $"{limitSql} ";
 
             return this;
         }
@@ -263,7 +303,8 @@ namespace Avids.Dapper.Lambda
             Params = where.Param;
             Params.AddDynamicParams(update.Param);
 
-            SqlString = $"UPDATE {FormatTableName(false)} {update.SqlCmd} {whereSql}";
+            SqlString += $"UPDATE {FormatTableName(false)} {update.SqlCmd} ";
+            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql} ";
 
             return this;
         }
@@ -288,7 +329,10 @@ namespace Avids.Dapper.Lambda
 
             Params = whereParams.Param;
 
-            SqlString = $"{selectSql} {fromTableSql} {nolockSql} {whereSql} ";
+            if (!selectSql.Equals(string.Empty)) SqlString += $"{selectSql} ";
+            if (!fromTableSql.Equals(string.Empty)) SqlString += $"{fromTableSql} ";
+            if (!nolockSql.Equals(string.Empty)) SqlString += $"{nolockSql} ";
+            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql} ";
 
             return this;
         }
@@ -352,11 +396,11 @@ namespace Avids.Dapper.Lambda
             string className = typeOfTableClass.GetTableAttributeName();
             string tableName = className;
 
-            SqlString = ProviderOption.CombineFieldName(tableName);
+            string sql = ProviderOption.CombineFieldName(tableName);
             if (isNeedFrom)
-                SqlString = "FROM " + SqlString;
+                sql = "FROM " + sql;
 
-            return SqlString;
+            return sql;
         }
 
         public void FormatProperty<T>()

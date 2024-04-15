@@ -14,7 +14,7 @@ namespace Avids.Dapper.Lambda.Expressions
 {
     public class UpdateEntityWhereExpression : SqlCmdExpression
     {
-        public override string SqlCmd => _sqlCmd.Length > 0 ? $" WHERE {_sqlCmd} " : string.Empty;
+        public override string SqlCmd => _sqlCmd.Length > 0 ? $"WHERE {_sqlCmd} " : string.Empty;
 
         private List<string> Fields { get; set; } = new List<string>();
 

@@ -20,13 +20,13 @@ namespace Avids.Dapper.Lambda.Expressions
 
         public string FieldsStr
         {
-            get => string.Join(",", Fields);
+            get => string.Join(", ", Fields);
         }
         private List<string> Fields { get; set; } = new List<string>();
 
         public string ValuesStr
         {
-            get => string.Join(",", Values);
+            get => string.Join(", ", Values);
         }
         private List<string> Values { get; set; } = new List<string>();
         public InsertExpression(LambdaExpression expression, ProviderOption providerOption)

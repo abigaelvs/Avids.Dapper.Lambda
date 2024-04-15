@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 
 using Avids.Dapper.Lambda.Test.Entity;
+using Avids.Dapper.Lambda.Core.SetQ;
 
 namespace Avids.Dapper.Lambda.Test.Services
 {
@@ -44,7 +45,11 @@ namespace Avids.Dapper.Lambda.Test.Services
 
             await conn.OpenAsync();
 
-            Invoice result = await conn.QuerySet<Invoice>().Where(c => c.Id.Equals(id)).GetAsync();
+            QuerySet<Invoice> query = conn.QuerySet<Invoice>()
+                .InnerJoin((InvoiceStatus stat, Invoice inv) => stat.Id == inv.Id) 
+                .Where(c => c.Id.Equals(id));
+
+            Invoice result = await query.GetAsync();
             await conn.CloseAsync();
 
             return result;

@@ -10,10 +10,10 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void TestInsertInto()
         {
-            string expected = @"INSERT INTO ""Invoice"" (""Id"",""No"",""StatusId"","
-                + @"""PaymentStatusId"",""CashierId"",""UpdatedByUserId"",""CustomerId"","
-                + @"""CreatedDate"",""UpdatedDate"") VALUES (@Id,@No,@StatusId,@PaymentStatusId,"
-                + @"@CashierId,@UpdatedByUserId,@CustomerId,@CreatedDate,@UpdatedDate)";
+            string expected = @"INSERT INTO ""Invoice"" (""Id"", ""No"", ""StatusId"", "
+                + @"""PaymentStatusId"", ""CashierId"", ""UpdatedByUserId"", ""CustomerId"", "
+                + @"""CreatedDate"", ""UpdatedDate"") VALUES (@Id, @No, @StatusId, @PaymentStatusId, "
+                + @"@CashierId, @UpdatedByUserId, @CustomerId, @CreatedDate, @UpdatedDate)";
 
             Invoice inv = new();
             inv.Id = 1;
@@ -33,10 +33,10 @@ namespace Avids.Dapper.Lambda.Test.Tests
         [Fact]
         public void TestInsertIfNotExists()
         {
-            string expected = @"INSERT INTO ""Invoice"" (""Id"",""No"",""StatusId"","
-                + @"""PaymentStatusId"",""CashierId"",""UpdatedByUserId"",""CustomerId"","
-                + @"""CreatedDate"",""UpdatedDate"") SELECT @Id,@No,@StatusId,@PaymentStatusId,"
-                + @"@CashierId,@UpdatedByUserId,@CustomerId,@CreatedDate,@UpdatedDate "
+            string expected = @"INSERT INTO ""Invoice"" (""Id"", ""No"", ""StatusId"", "
+                + @"""PaymentStatusId"", ""CashierId"", ""UpdatedByUserId"", ""CustomerId"", "
+                + @"""CreatedDate"", ""UpdatedDate"") SELECT @Id, @No, @StatusId, @PaymentStatusId, "
+                + @"@CashierId, @UpdatedByUserId, @CustomerId, @CreatedDate, @UpdatedDate "
                 + @"WHERE NOT EXISTS(SELECT 1 FROM ""Invoice"" WHERE (""Id"" = @INT_Id1))";
 
             Invoice inv = new();
