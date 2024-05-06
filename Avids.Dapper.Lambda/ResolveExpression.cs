@@ -54,7 +54,6 @@ namespace Avids.Dapper.Lambda
         /// <returns></returns>
         public string ResolveGroupBy(SetContext context)
         {
-            Console.WriteLine("=== group by");
             List<string> groupByList = context.GroupByExpressionList.Select(a =>
             {
                 MemberInfo member = ((MemberExpression)a.Body).Member;

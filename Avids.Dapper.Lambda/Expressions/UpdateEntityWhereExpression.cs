@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -47,8 +46,6 @@ namespace Avids.Dapper.Lambda.Expressions
             foreach (PropertyInfo item in properties)
             {
                 // Check if property has DatabaseGenerated attribute, if yes skip (not insert)
-                Console.WriteLine(item.Name);
-
                 if (!item.CustomAttributes.Any(b => b.AttributeType == typeof(KeyAttribute)) && 
                     !item.CustomAttributes.Any(b => b.AttributeType == typeof(DatabaseGeneratedAttribute)))
                     continue;
