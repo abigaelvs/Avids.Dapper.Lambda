@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -47,6 +48,8 @@ namespace Avids.Dapper.Lambda.Expressions
                 _sqlCmd.Append(")");
             }
         }
+
+        #region Visit Override
 
         /// <summary>
         /// Visit Member for Where Expression
@@ -115,32 +118,27 @@ namespace Avids.Dapper.Lambda.Expressions
                 In(node);
             else if (node.Method.Name == "ToLower") ToLower(node);
             else if (node.Method.Name == "ToUpper") ToUpper(node);
-            else if (node.Method.Name == "Equals") 
-                Equal(node);
-            else
-                Like(node);
+            else if (node.Method.Name == "Parse") Parse(node);
+            else if (node.Method.Name == "ToString") ToString(node);
+            else if (node.Method.Name == "Equals") Equal(node);
+            else Like(node);
 
             return node;
         }
 
+        #endregion
+
+        #region Like & Not Like
         /// <summary>
-        /// Set Param for Where Expression
+        /// Like in Where Expression
         /// </summary>
-        /// <param name="value"></param>
-        private void SetParam(object value)
+        /// <param name="node"></param>
+        /// <exception cref="DapperExtensionException"></exception>
+        private void Like(MethodCallExpression node)
         {
-            if (value != null)
-            {
-                if (!string.IsNullOrWhiteSpace(TempFieldName))
-                {
-                    _sqlCmd.Append(ParamName);
-                    Param.Add(TempFieldName, value);
-                }
-            }
-            else
-            {
-                _sqlCmd.Append("NULL");
-            }
+            Visit(node.Object);
+            _sqlCmd.AppendFormat(" LIKE {0}", ParamName);
+            LikeHelper(node);
         }
 
         /// <summary>
@@ -154,38 +152,23 @@ namespace Avids.Dapper.Lambda.Expressions
             LikeHelper(node);
         }
 
-        /// <summary>
-        /// Like in Where Expression
-        /// </summary>
-        /// <param name="node"></param>
-        /// <exception cref="DapperExtensionException"></exception>
-        private void Like(MethodCallExpression node)
-        {
-            Visit(node.Object);
-            _sqlCmd.AppendFormat(" LIKE {0}", ParamName);
-            LikeHelper(node);
-        }
-
         private void LikeHelper(MethodCallExpression node)
         {
             switch (node.Method.Name)
             {
                 case "StartsWith":
                     {
-                        ConstantExpression argumentExpression = (ConstantExpression)node.Arguments[0];
-                        Param.Add(TempFieldName, argumentExpression.Value + "%");
+                        LikeBuilder(node, false, true);
                     }
                     break;
                 case "EndsWith":
                     {
-                        ConstantExpression argumentExpression = (ConstantExpression)node.Arguments[0];
-                        Param.Add(TempFieldName, "%" + argumentExpression.Value);
+                        LikeBuilder(node, true, false);
                     }
                     break;
                 case "Contains":
                     {
-                        ConstantExpression argumentExpression = (ConstantExpression)node.Arguments[0];
-                        Param.Add(TempFieldName, "%" + argumentExpression.Value + "%");
+                        LikeBuilder(node, true, true);
                     }
                     break;
                 default:
@@ -193,16 +176,34 @@ namespace Avids.Dapper.Lambda.Expressions
             }
         }
 
+        private void LikeBuilder(MethodCallExpression node, bool prefix, bool suffix)
+        {
+            string strPrefix = prefix ? "%" : "";
+            string strSuffix = suffix ? "%" : "";
+
+            if (node.Arguments[0] is ConstantExpression)
+            {
+                ConstantExpression argumentExpression = (ConstantExpression)node.Arguments[0];
+                Param.Add(TempFieldName, $"{strPrefix}{argumentExpression.Value}{strSuffix}");
+            }
+            else
+            {
+                Visit(node.Arguments[0]);
+
+                object value = Param.Get<object>(TempFieldName);
+                Param.Add(TempFieldName, $"{strPrefix}{value}{strSuffix}");
+            }
+        }
+        #endregion
+
+        #region Upper & Lower
         /// <summary>
-        /// Equal function in Where Expression
+        /// UPPER sql function
         /// </summary>
         /// <param name="node"></param>
-        private void Equal(MethodCallExpression node)
+        private void ToUpper(MethodCallExpression node)
         {
-            Visit(node.Object);
-            _sqlCmd.AppendFormat(" = {0}", ParamName);
-            object argumentExpression = node.Arguments[0].ToConvertAndGetValue();
-            Param.Add(TempFieldName, argumentExpression);
+            UpperLower(node, true);
         }
 
         /// <summary>
@@ -211,20 +212,85 @@ namespace Avids.Dapper.Lambda.Expressions
         /// <param name="node"></param>
         private void ToLower(MethodCallExpression node)
         {
-            _sqlCmd.Append("LOWER(");
-            Visit(node.Object);
-            _sqlCmd.Append(")");
+            UpperLower(node, false);
         }
 
+        private void UpperLower(MethodCallExpression node, bool isUpper)
+        {
+            string functionName = isUpper ? "UPPER" : "LOWER";
+            try
+            {
+                object value = node.ToConvertAndGetValue();
+                Param.Add(TempFieldName, value);
+            }
+            catch (InvalidOperationException)
+            {
+                _sqlCmd.Append($"{functionName}(");
+                Visit(node.Object);
+                _sqlCmd.Append(")");
+            }
+        }
+
+        #endregion
+
         /// <summary>
-        /// UPPER sql function
+        /// Equal function in Where Expression
         /// </summary>
         /// <param name="node"></param>
-        private void ToUpper(MethodCallExpression node)
+        private void Equal(MethodCallExpression node)
         {
-            _sqlCmd.Append("UPPER(");
             Visit(node.Object);
-            _sqlCmd.Append(")");
+            _sqlCmd.AppendFormat(" ={0}", ParamName);
+            object argumentExpression = node.Arguments[0].ToConvertAndGetValue();
+            Param.Add(TempFieldName, argumentExpression);
+        }
+
+        private void Parse(MethodCallExpression node)
+        {
+            ConstantExpression argumentExpression = (ConstantExpression)node.Arguments[0];
+            object value = argumentExpression.Value;
+            switch (node.Type.ToString())
+            {
+                case "System.Int16":
+                    value = int.Parse(value.ToString());
+                    break;
+                case "System.UInt16":
+                    value = ushort.Parse(value.ToString());
+                    break;
+                case "System.Int32":
+                    value = int.Parse(value.ToString());
+                    break;
+                case "System.UInt32":
+                    value = uint.Parse(value.ToString());
+                    break;
+                case "System.Int64":
+                    value = long.Parse(value.ToString());
+                    break;
+                case "System.UInt64":
+                    value = ulong.Parse(value.ToString());
+                    break;
+                case "System.DateTime":
+                    value = DateTime.Parse(value.ToString());
+                    break;
+                default:
+                    throw new DapperExtensionException("The expression is not supported by this function");
+            }
+
+            SetParam(value);
+        }
+
+        private void ToString(MethodCallExpression node)
+        {
+            try
+            {
+                object value = node.ToConvertAndGetValue();
+
+                SetParam(value.ToString());
+            }
+            catch (InvalidOperationException)
+            {
+                Visit(node.Object);
+            }
         }
 
         /// <summary>
@@ -256,6 +322,26 @@ namespace Avids.Dapper.Lambda.Expressions
             keywords.Add("IN");
             keywords.Add(paramName);
             _sqlCmd.AppendFormat(" {0}", string.Join(" ", keywords));
+        }
+
+        /// <summary>
+        /// Set Param for Where Expression
+        /// </summary>
+        /// <param name="value"></param>
+        private void SetParam(object value)
+        {
+            if (value != null)
+            {
+                if (!string.IsNullOrWhiteSpace(TempFieldName))
+                {
+                    _sqlCmd.Append(ParamName);
+                    Param.Add(TempFieldName, value);
+                }
+            }
+            else
+            {
+                _sqlCmd.Append("NULL");
+            }
         }
     }
 }
