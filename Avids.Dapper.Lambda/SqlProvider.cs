@@ -110,9 +110,8 @@ namespace Avids.Dapper.Lambda
 
             string nolockSql = ResolveExpression.ResolveWithNoLock(SetContext.NoLock);
 
-            bool withTableName = SetContext.JoinExpressions.Count > 0;
             JoinExpression joinParams = ResolveExpression.ResolveJoin(SetContext.JoinExpressions);
-            WhereExpression whereParams = ResolveExpression.ResolveWhere(SetContext.WhereExpressions, withTableName: withTableName);
+            WhereExpression whereParams = ResolveExpression.ResolveWhere(SetContext.WhereExpressions, withTableName: SetContext.HasJoin);
 
             string selectSql = ResolveExpression.ResolveSelect(SetContext);
 
