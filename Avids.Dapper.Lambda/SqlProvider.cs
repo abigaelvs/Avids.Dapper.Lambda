@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -50,7 +51,8 @@ namespace Avids.Dapper.Lambda
             get
             {
                 string sql = $"{SqlString}";
-                foreach (string param in Params.ParameterNames)
+                IOrderedEnumerable<string> parameters = Params.ParameterNames.OrderByDescending(p => p);
+                foreach (string param in parameters)
                 {
                     dynamic value = Params.Get<dynamic>(param);
                     string strValue = value is string || value is char ? 
