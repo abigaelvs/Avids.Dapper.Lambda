@@ -88,7 +88,7 @@ namespace Avids.Dapper.Lambda
 
             string groupBySql = ResolveExpression.ResolveGroupBy(SetContext);
 
-            string orderbySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList);
+            string orderbySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList, SetContext.HasJoin);
 
             string limitSql = "LIMIT 1";
 
