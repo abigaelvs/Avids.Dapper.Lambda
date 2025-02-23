@@ -77,28 +77,28 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         }
 
         /// <inheritdoc />
-        public QuerySet<T> InnerJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on)
+        public QuerySet<T> InnerJoin<TJoinTable, TOnTable>(Expression<Func<TJoinTable, TOnTable, bool>> on)
         {
             CreateJoin(EJoin.InnerJoin, on);
             return this;
         }
 
         /// <inheritdoc />
-        public QuerySet<T> LeftJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on)
+        public QuerySet<T> LeftJoin<TJoinTable, TOnTable>(Expression<Func<TJoinTable, TOnTable, bool>> on)
         {
             CreateJoin(EJoin.LeftJoin, on);
             return this;
         }
 
         /// <inheritdoc />
-        public QuerySet<T> RightJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on)
+        public QuerySet<T> RightJoin<TJoinTable, TOnTable>(Expression<Func<TJoinTable, TOnTable, bool>> on)
         {
             CreateJoin(EJoin.RightJoin, on);
             return this;
         }
 
         /// <inheritdoc />
-        public QuerySet<T> FullJoin<ITJoinTable>(Expression<Func<ITJoinTable, T, bool>> on)
+        public QuerySet<T> FullJoin<TJoinTable, TOnTable>(Expression<Func<TJoinTable, TOnTable, bool>> on)
         {
             CreateJoin(EJoin.FullJoin, on);
             return this;

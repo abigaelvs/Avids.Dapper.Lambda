@@ -20,7 +20,7 @@ namespace Avids.Dapper.Lambda.Core.Interfaces
         /// <typeparam name="I"></typeparam>
         /// <param name="on"></param>
         /// <returns></returns>
-        QuerySet<T> InnerJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on);
+        QuerySet<T> InnerJoin<TJoinTable, TOnTable>(Expression<Func<TJoinTable, TOnTable, bool>> on);
 
         /// <summary>
         /// Left Join
@@ -28,7 +28,7 @@ namespace Avids.Dapper.Lambda.Core.Interfaces
         /// <typeparam name="I"></typeparam>
         /// <param name="on"></param>
         /// <returns></returns>
-        QuerySet<T> LeftJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on);
+        QuerySet<T> LeftJoin<TJoinTable, TOnTable>(Expression<Func<TJoinTable, TOnTable, bool>> on);
 
         /// <summary>
         /// Right Join
@@ -36,7 +36,7 @@ namespace Avids.Dapper.Lambda.Core.Interfaces
         /// <typeparam name="I"></typeparam>
         /// <param name="on"></param>
         /// <returns></returns>
-        QuerySet<T> RightJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on);
+        QuerySet<T> RightJoin<TJoinTable, TOnTable>(Expression<Func<TJoinTable, TOnTable, bool>> on);
 
         /// <summary>
         /// Full Join
@@ -44,7 +44,7 @@ namespace Avids.Dapper.Lambda.Core.Interfaces
         /// <typeparam name="I"></typeparam>
         /// <param name="on"></param>
         /// <returns></returns>
-        QuerySet<T> FullJoin<TJoinTable>(Expression<Func<TJoinTable, T, bool>> on);
+        QuerySet<T> FullJoin<TJoinTable, TOnTable>(Expression<Func<TJoinTable, TOnTable, bool>> on);
 
         /// <summary>
         /// Create sql statement NO LOCK
