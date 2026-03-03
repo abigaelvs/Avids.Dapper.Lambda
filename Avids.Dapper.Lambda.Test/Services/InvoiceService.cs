@@ -2,6 +2,8 @@
 
 using Avids.Dapper.Lambda.Test.Entity;
 using Avids.Dapper.Lambda.Core.SetQ;
+using Dapper;
+using System.Text.Json;
 
 namespace Avids.Dapper.Lambda.Test.Services
 {
@@ -33,7 +35,8 @@ namespace Avids.Dapper.Lambda.Test.Services
 
             await conn.OpenAsync();
 
-            List<Invoice> result = await conn.QuerySet<Invoice>().ToListAsync();
+            List<Invoice> result = await conn.QuerySet<Invoice>()
+                .Where(inv => inv.No.Contains(null)).ToListAsync();
             await conn.CloseAsync();
 
             return result;
@@ -45,9 +48,12 @@ namespace Avids.Dapper.Lambda.Test.Services
 
             await conn.OpenAsync();
 
+            long? customId = null;
+            string customNo = null;
+
             QuerySet<Invoice> query = conn.QuerySet<Invoice>()
-                .InnerJoin((InvoiceStatus stat, Invoice inv) => stat.Id == inv.Id) 
-                .Where(c => c.Id.Equals(id));
+                //.InnerJoin((InvoiceStatus stat, Invoice inv) => stat.Id == inv.Id)
+                .Where(c => !c.Id.Equals(customId));
 
             Invoice result = await query.GetAsync();
             await conn.CloseAsync();

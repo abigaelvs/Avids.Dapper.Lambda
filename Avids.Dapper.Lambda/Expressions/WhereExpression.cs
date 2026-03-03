@@ -80,6 +80,10 @@ namespace Avids.Dapper.Lambda.Expressions
             {
                 MethodCallExpression call = node.Left as MethodCallExpression;
                 if (ExpressionExtension.IsMethodCallList(call)) In(call, true);
+                else if (call.Method.Name == "Equals")
+                {
+                    NotEqual(call);
+                }
                 else NotLike(call);
 
                 return node;
@@ -240,43 +244,38 @@ namespace Avids.Dapper.Lambda.Expressions
         private void Equal(MethodCallExpression node)
         {
             Visit(node.Object);
-            _sqlCmd.AppendFormat(" ={0}", ParamName);
+
+            string sqlCmdFormat = " = {0}";
             object argumentExpression = node.Arguments[0].ToConvertAndGetValue();
+
+            if (argumentExpression == null)
+            {
+                sqlCmdFormat = " IS NULL";
+            }
+
+            _sqlCmd.AppendFormat(sqlCmdFormat, ParamName);
+            Param.Add(TempFieldName, argumentExpression);
+        }
+
+        private void NotEqual(MethodCallExpression node)
+        {
+            Visit(node.Object);
+
+            string sqlCmdFormat = " != {0}";
+            object argumentExpression = node.Arguments[0].ToConvertAndGetValue();
+
+            if (argumentExpression == null)
+            {
+                sqlCmdFormat = " IS NOT NULL";
+            }
+
+            _sqlCmd.AppendFormat(sqlCmdFormat, ParamName);
             Param.Add(TempFieldName, argumentExpression);
         }
 
         private void Parse(MethodCallExpression node)
         {
-            ConstantExpression argumentExpression = (ConstantExpression)node.Arguments[0];
-            object value = argumentExpression.Value;
-            switch (node.Type.ToString())
-            {
-                case "System.Int16":
-                    value = int.Parse(value.ToString());
-                    break;
-                case "System.UInt16":
-                    value = ushort.Parse(value.ToString());
-                    break;
-                case "System.Int32":
-                    value = int.Parse(value.ToString());
-                    break;
-                case "System.UInt32":
-                    value = uint.Parse(value.ToString());
-                    break;
-                case "System.Int64":
-                    value = long.Parse(value.ToString());
-                    break;
-                case "System.UInt64":
-                    value = ulong.Parse(value.ToString());
-                    break;
-                case "System.DateTime":
-                    value = DateTime.Parse(value.ToString());
-                    break;
-                default:
-                    throw new DapperExtensionException("The expression is not supported by this function");
-            }
-
-            SetParam(value);
+            SetParam(node.ToConvertAndGetValue());
         }
 
         private void ToString(MethodCallExpression node)

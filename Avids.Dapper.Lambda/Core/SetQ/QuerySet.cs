@@ -3,7 +3,7 @@ using System.Data;
 using System.Linq.Expressions;
 
 using Avids.Dapper.Lambda.Core.Interfaces;
-
+using Avids.Dapper.Lambda.Helper;
 using Avids.Dapper.Lambda.Model;
 
 namespace Avids.Dapper.Lambda.Core.SetQ
@@ -29,6 +29,20 @@ namespace Avids.Dapper.Lambda.Core.SetQ
             SqlProvider.SetContext.TableType = tableType;
         }
 
+        public QuerySet<T> Where(WhereBuilder<T> whereBuilder)
+        {
+            while (whereBuilder.WhereExpressions.Count > 0)
+            {
+                Where where = whereBuilder.WhereExpressions.Dequeue();
+                if (SqlProvider.SetContext.WhereExpressions.Count > 0 && where.WhereType == null)
+                {
+                    where.WhereType = EWhere.AND;
+                }
+                SqlProvider.SetContext.WhereExpressions.Enqueue(where);
+            }
+            return this;
+        }
+
         /// <inheritdoc />
         public QuerySet<T> Where(Expression<Func<T, bool>> predicate)
         {
@@ -50,6 +64,16 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         }
 
         /// <inheritdoc />
+        public QuerySet<T> And(Expression<Func<T, bool>> predicate)
+        {
+            Where where = new Where();
+            where.WhereType = EWhere.AND;
+            where.WhereExpression = predicate;
+            SqlProvider.SetContext.WhereExpressions.Enqueue(where);
+            return this;
+        }
+
+        /// <inheritdoc />
         public QuerySet<T> And<W>(Expression<Func<W, bool>> predicate)
         {
             Where where = new Where();
@@ -60,7 +84,17 @@ namespace Avids.Dapper.Lambda.Core.SetQ
         }
 
         /// <inheritdoc />
-        public QuerySet<T> Or<W>(Expression<Func<W, bool>> predicate)
+        public QuerySet<T> Or(Expression<Func<T, bool>> predicate)
+        {
+            Where where = new Where();
+            where.WhereType = EWhere.OR;
+            where.WhereExpression = predicate;
+            SqlProvider.SetContext.WhereExpressions.Enqueue(where);
+            return this;
+        }
+
+        /// <inheritdoc />
+        public QuerySet<T> Or<S>(Expression<Func<S, bool>> predicate)
         {
             Where where = new Where();
             where.WhereType = EWhere.OR;

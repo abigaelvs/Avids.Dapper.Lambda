@@ -10,12 +10,12 @@ namespace Avids.Dapper.Lambda.SqLite
         /// <summary>
         /// Open Quote / Start Quote for table name or column name
         /// </summary>
-        private const char OpenQuote = '"';
+        private const char OpenQuote = '\'';
 
         /// <summary>
         /// Close Quote / End Quote for table name or column name
         /// </summary>
-        private const char CloseQuote = '"';
+        private const char CloseQuote = '\'';
 
         /// <summary>
         /// Prefix for statement parameter

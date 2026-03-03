@@ -38,7 +38,9 @@ namespace Avids.Dapper.Lambda.Expressions
 
             foreach (PropertyInfo item in properties)
             {
-                if (item.CustomAttributes.Any(b => b.AttributeType == typeof(KeyAttribute)))
+                if (item.CustomAttributes.Any(
+                    b => b.AttributeType == typeof(DatabaseGeneratedAttribute) ||
+                    b.AttributeType == typeof(KeyAttribute)))
                     continue;
 
                 if (_sqlCmd.Length > 0)

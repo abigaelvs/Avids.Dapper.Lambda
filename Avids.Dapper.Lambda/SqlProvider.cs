@@ -41,7 +41,7 @@ namespace Avids.Dapper.Lambda
         /// <summary>
         /// Sql String result
         /// </summary>
-        public string SqlString { get; set; }
+        public string SqlString { get; protected set; }
 
         /// <summary>
         /// Raw Sql String or Unprepared version of Sql String
@@ -55,8 +55,8 @@ namespace Avids.Dapper.Lambda
                 foreach (string param in parameters)
                 {
                     dynamic value = Params.Get<dynamic>(param);
-                    string strValue = value is string || value is char ? 
-                        $"{ProviderOption.OpenQuote}{value}{ProviderOption.CloseQuote}" : Convert.ToString(value);
+                    string strValue = value is string || value is char || value is DateTime ?
+                        $"{ProviderOption.OpenQuote}{value}{ProviderOption.CloseQuote}" : $"{value}";
                     sql = sql.Replace($"@{param}", strValue);
                 }
                 return sql;
@@ -80,7 +80,7 @@ namespace Avids.Dapper.Lambda
 
             string nolockSql = ResolveExpression.ResolveWithNoLock(SetContext.NoLock);
 
-            WhereExpression whereParams = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
+            WhereExpression whereParams = ResolveExpression.ResolveWhere(SetContext.WhereExpressions, withTableName: SetContext.HasJoin);
 
             string whereSql = whereParams.SqlCmd;
 
@@ -123,7 +123,7 @@ namespace Avids.Dapper.Lambda
 
             string groupBySql = ResolveExpression.ResolveGroupBy(SetContext);
 
-            string orderbySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList, withTableName);
+            string orderbySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList, SetContext.HasJoin);
 
             int? limitNum = SetContext.LimitNum;
             int? offsetNum = SetContext.OffsetNum;
@@ -147,8 +147,6 @@ namespace Avids.Dapper.Lambda
         public virtual SqlProvider FormatToPageList<T>(int pageIndex, int pageSize)
         {
             string orderbySql = ResolveExpression.ResolveOrderBy(SetContext.OrderbyExpressionList);
-            if (string.IsNullOrEmpty(orderbySql))
-                throw new DapperExtensionException("order by takes precedence over pagelist");
 
             string groupBySql = ResolveExpression.ResolveGroupBy(SetContext);
 
@@ -158,22 +156,27 @@ namespace Avids.Dapper.Lambda
 
             string nolockSql = ResolveExpression.ResolveWithNoLock(SetContext.NoLock);
 
+            JoinExpression joinParams = ResolveExpression.ResolveJoin(SetContext.JoinExpressions);
             WhereExpression whereParams = ResolveExpression.ResolveWhere(SetContext.WhereExpressions);
 
             string whereSql = whereParams.SqlCmd;
+
+            string joinSql = joinParams.SqlCmd;
 
             Params = whereParams.Param;
 
             string limitSql = $"LIMIT {pageSize}";
             string offsetSql = $"OFFSET {(pageIndex - 1) * pageSize}";
 
-            SqlString += "SELECT COUNT(1)";
+            SqlString += "SELECT COUNT(1) ";
             if (!fromTableSql.Equals(string.Empty)) SqlString += $"{fromTableSql} ";
             if (!nolockSql.Equals(string.Empty)) SqlString += $"{nolockSql} ";
-            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql};";
+            if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql}";
+            SqlString += ";";
 
             if (!selectSql.Equals(string.Empty)) SqlString += $"{selectSql} ";
             if (!fromTableSql.Equals(string.Empty)) SqlString += $"{fromTableSql} ";
+            if (!joinSql.Equals(string.Empty)) SqlString += $"{joinSql} ";
             if (!nolockSql.Equals(string.Empty)) SqlString += $"{nolockSql} ";
             if (!whereSql.Equals(string.Empty)) SqlString += $"{whereSql} ";
             if (!groupBySql.Equals(string.Empty)) SqlString += $"{groupBySql} ";

@@ -21,11 +21,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.28" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
-  
-  <ItemGroup>
+
+	<ItemGroup>
 	<None Include="..\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 

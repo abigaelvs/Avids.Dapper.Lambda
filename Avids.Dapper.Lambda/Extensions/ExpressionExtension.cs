@@ -58,6 +58,16 @@ namespace Avids.Dapper.Lambda.Extension
         }
 
         #region Get Expression TypeConversion Result
+        private static bool IsNullConstant(Expression expr)
+        {
+            while (expr is UnaryExpression unary && expr.NodeType == ExpressionType.Convert)
+            {
+                expr = unary.Operand;
+            }
+
+            return expr is ConstantExpression ce && ce.Value == null;
+        }
+
         /// <summary>
         /// Get Expression TypeConversion Result
         /// </summary>
@@ -68,7 +78,7 @@ namespace Avids.Dapper.Lambda.Extension
             string nodeTypeDic = NodeTypeDic[node.NodeType];
 
             string nodeType = null;
-            if (node.Right.NodeType == ExpressionType.Constant && ((ConstantExpression)node.Right).Value == null)
+            if (IsNullConstant(node.Right))
             {
                 switch (node.NodeType)
                 {

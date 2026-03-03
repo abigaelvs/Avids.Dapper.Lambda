@@ -8,6 +8,7 @@ using Avids.Dapper.Lambda.PostgreSql;
 using Avids.Dapper.Lambda.MsSql;
 using Avids.Dapper.Lambda.MySql;
 using Avids.Dapper.Lambda.Exception;
+using Avids.Dapper.Lambda.SqLite;
 
 namespace Avids.Dapper.Lambda
 {
@@ -115,6 +116,8 @@ namespace Avids.Dapper.Lambda
                     return new MsSqlProvider();
                 case "MySqlConnection":
                     return new MySqlProvider();
+                case "SqliteConnection":
+                    return new SqLiteProvider();
                 default:
                     throw new DapperExtensionException("Your database provider currently not supported");
             }
